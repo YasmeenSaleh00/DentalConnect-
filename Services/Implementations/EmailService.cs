@@ -7,7 +7,7 @@ namespace DentBridge.Services.Implementations;
 public class EmailSettings
 {
     public string Host { get; set; } = string.Empty;
-    public int Port { get; set; } = 587;
+    public int Port { get; set; } = 465;
     public string Username { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
     public string FromName { get; set; } = "DentBridge";
@@ -24,6 +24,9 @@ public class EmailService : IEmailService
     {
         _settings = config.GetSection("EmailSettings").Get<EmailSettings>() ?? new EmailSettings();
         _logger = logger;
+
+        if (string.IsNullOrWhiteSpace(_settings.Host) || string.IsNullOrWhiteSpace(_settings.Password))
+            _logger.LogWarning("EmailSettings is incomplete — emails will not be sent.");
     }
 
     public async Task SendAsync(string to, string subject, string htmlBody)
@@ -40,7 +43,7 @@ public class EmailService : IEmailService
 
             using var client = new SmtpClient();
             await client.ConnectAsync(_settings.Host, _settings.Port,
-                _settings.EnableSsl ? MailKit.Security.SecureSocketOptions.StartTls
+                _settings.EnableSsl ? MailKit.Security.SecureSocketOptions.Auto
                                     : MailKit.Security.SecureSocketOptions.None);
             await client.AuthenticateAsync(_settings.Username, _settings.Password);
             await client.SendAsync(message);
@@ -48,7 +51,7 @@ public class EmailService : IEmailService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to send email to {To}", to);
+            _logger.LogError(ex, "Failed to send email to {To}: [{Type}] {Message}", to, ex.GetType().Name, ex.Message);
         }
     }
 
@@ -95,7 +98,7 @@ public class EmailService : IEmailService
             </div>
             <div style="padding:30px;color:#374151;line-height:1.6">{body}</div>
             <div style="background:#f8fafc;padding:20px;text-align:center;color:#9ca3af;font-size:12px">
-              © 2024 DentBridge. All rights reserved.
+              © 2026 DentBridge. All rights reserved.
             </div>
           </div>
         </body>
