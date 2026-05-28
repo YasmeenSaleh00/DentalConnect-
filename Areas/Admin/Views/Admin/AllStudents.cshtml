@@ -1,0 +1,87 @@
+@model IEnumerable<DentBridge.Models.StudentProfile>
+@using DentBridge.Models.Enums
+@{ ViewData["Title"] = "All Students"; }
+
+<div class="page-header">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between">
+            <h1><i class="bi bi-mortarboard-fill text-primary me-2"></i>All Students
+                <span class="badge bg-secondary ms-2 fw-500">@Model.Count()</span>
+            </h1>
+            <a asp-area="Admin" asp-controller="Admin" asp-action="PendingStudents" class="btn btn-warning fw-600">
+                <i class="bi bi-person-check me-2"></i>Pending Approvals
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon"><i class="bi bi-mortarboard"></i></div>
+            <h4 class="fw-600">No students registered yet</h4>
+            <p class="text-muted">Students will appear here once they register.</p>
+        </div>
+    }
+    else
+    {
+        <div class="db-card">
+            <div class="table-responsive">
+                <table class="table db-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>University</th>
+                            <th>Specialization</th>
+                            <th>Rating</th>
+                            <th>Cases</th>
+                            <th>Joined</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var student in Model)
+                        {
+                            var sc = student.Status switch {
+                                AccountStatus.Active   => "badge-status-open",
+                                AccountStatus.Pending  => "badge-status-pending",
+                                AccountStatus.Rejected => "badge-status-cancelled",
+                                _                      => "badge-status-cancelled"
+                            };
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="avatar-initials-xs">
+                                            @student.User.FirstName[0]@student.User.LastName[0]
+                                        </div>
+                                        <div>
+                                            <div class="fw-500">@student.User.FullName</div>
+                                            <div class="text-muted" style="font-size:.78rem">@student.User.Email</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-muted small">@student.UniversityName</td>
+                                <td class="text-muted small">@student.Specialization</td>
+                                <td>
+                                    <span class="stars small">@student.AverageRating.ToString("F1")★</span>
+                                    <span class="text-muted small">(@student.TotalRatings)</span>
+                                </td>
+                                <td class="text-muted small fw-500">@student.CompletedCases</td>
+                                <td class="text-muted small">@student.User.CreatedAt.ToString("dd MMM yyyy")</td>
+                                <td><span class="db-badge @sc">@student.Status</span></td>
+                                <td>
+                                    <a asp-area="Admin" asp-controller="Admin" asp-action="StudentDetails" asp-route-id="@student.Id"
+                                       class="btn btn-sm btn-outline-primary px-2">
+                                        <i class="bi bi-arrow-right"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

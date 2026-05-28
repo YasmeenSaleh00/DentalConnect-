@@ -1,0 +1,83 @@
+@model DentBridge.ViewModels.Case.SubmitReviewViewModel
+@{ ViewData["Title"] = "Leave a Review"; }
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="text-center mb-4">
+                <i class="bi bi-star-fill text-warning" style="font-size:2.5rem"></i>
+                <h2 class="fw-700 mt-2">Rate Your Experience</h2>
+                <p class="text-muted">
+                    How was your treatment for <strong>@Model.CaseTitle</strong>
+                    with <strong>@Model.StudentName</strong>?
+                </p>
+            </div>
+
+            <div class="db-card p-4">
+                <form asp-action="Review" method="post">
+                    <input type="hidden" asp-for="CaseId" />
+                    <input type="hidden" asp-for="CaseTitle" />
+                    <input type="hidden" asp-for="StudentName" />
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+
+                    <!-- Star Rating -->
+                    <div class="mb-4 text-center">
+                        <label class="form-label d-block mb-3">Overall Rating</label>
+                        <div class="star-rating-input justify-content-center">
+                            @for (int i = 5; i >= 1; i--)
+                            {
+                                <input type="radio" asp-for="Rating" value="@i" id="star@i" />
+                                <label for="star@i" title="@i stars"><i class="bi bi-star-fill"></i></label>
+                            }
+                        </div>
+                        <span asp-validation-for="Rating" class="text-danger small d-block mt-2"></span>
+                    </div>
+
+                    <!-- Checkboxes -->
+                    <div class="mb-4">
+                        <label class="form-label fw-600">Quick Assessment</label>
+                        <div class="row g-2">
+                            <div class="col-12">
+                                <div class="form-check form-switch">
+                                    <input asp-for="IsProfessional" class="form-check-input" role="switch" />
+                                    <label asp-for="IsProfessional" class="form-check-label">
+                                        <i class="bi bi-award me-1 text-primary"></i>The student was professional
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check form-switch">
+                                    <input asp-for="IsTimely" class="form-check-input" role="switch" />
+                                    <label asp-for="IsTimely" class="form-check-label">
+                                        <i class="bi bi-clock-history me-1 text-primary"></i>Treatment was completed on time
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check form-switch">
+                                    <input asp-for="IsRecommended" class="form-check-input" role="switch" />
+                                    <label asp-for="IsRecommended" class="form-check-label">
+                                        <i class="bi bi-hand-thumbs-up me-1 text-primary"></i>I would recommend this student
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comment -->
+                    <div class="mb-4">
+                        <label asp-for="Comment" class="form-label">Comments <span class="text-muted">(optional)</span></label>
+                        <textarea asp-for="Comment" class="form-control" rows="4"
+                                  placeholder="Tell others about your experience..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning fw-600 w-100 py-2 text-dark">
+                        <i class="bi bi-send me-2"></i>Submit Review
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts { @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); } }

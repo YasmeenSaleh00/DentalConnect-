@@ -1,0 +1,87 @@
+@model DentBridge.ViewModels.Account.LoginViewModel
+@{ ViewData["Title"] = "Sign In"; }
+
+<div class="min-vh-100 d-flex align-items-center" style="background:var(--db-surface)">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5 col-lg-4">
+
+                <!-- Logo -->
+                <div class="text-center mb-4">
+                    <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                        <i class="bi bi-heart-pulse-fill text-primary" style="font-size:2.5rem"></i>
+                        <div class="fw-700 fs-4" style="color:var(--db-dark)">DentBridge</div>
+                    </a>
+                    <p class="text-muted mt-1 small">Sign in to your account</p>
+                </div>
+
+                <div class="db-card p-4">
+                    <form asp-action="Login" method="post">
+                        <input type="hidden" asp-for="ReturnUrl" />
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label">Email Address</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0">
+                                    <i class="bi bi-envelope text-muted"></i>
+                                </span>
+                                <input asp-for="Email" class="form-control border-start-0 ps-0"
+                                       placeholder="you@example.com" autocomplete="email" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label">Password</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0">
+                                    <i class="bi bi-lock text-muted"></i>
+                                </span>
+                                <input asp-for="Password" class="form-control border-start-0 ps-0"
+                                       placeholder="••••••••" autocomplete="current-password" id="pwdInput" />
+                                <button type="button" class="input-group-text bg-white"
+                                        onclick="togglePwd()">
+                                    <i class="bi bi-eye" id="pwdIcon"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input asp-for="RememberMe" class="form-check-input" />
+                            <label asp-for="RememberMe" class="form-check-label text-muted small">Remember me for 7 days</label>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-600">
+                            Sign In
+                        </button>
+                    </form>
+                </div>
+
+                <div class="text-center mt-3">
+                    <p class="text-muted small mb-1">Don't have an account?</p>
+                    <a asp-controller="Account" asp-action="RegisterPatient" class="btn btn-outline-primary btn-sm me-2">
+                        Register as Patient
+                    </a>
+                    <a asp-controller="Account" asp-action="RegisterStudent" class="btn btn-outline-secondary btn-sm">
+                        Register as Student
+                    </a>
+                </div>
+
+               
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+function togglePwd() {
+    const i = document.getElementById('pwdInput');
+    const icon = document.getElementById('pwdIcon');
+    if (i.type === 'password') { i.type = 'text'; icon.className = 'bi bi-eye-slash'; }
+    else { i.type = 'password'; icon.className = 'bi bi-eye'; }
+}
+</script>
+}

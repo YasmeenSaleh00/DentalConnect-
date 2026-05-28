@@ -1,0 +1,119 @@
+@model DentBridge.ViewModels.Testimonial.SubmitTestimonialViewModel
+@{ ViewData["Title"] = "Share Your Experience"; }
+
+<div class="page-header">
+    <div class="container">
+        <div class="d-flex align-items-center gap-3">
+            <a asp-controller="Patient" asp-action="Dashboard" class="btn btn-ghost-icon">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <div>
+                <h1 class="mb-0"><i class="bi bi-chat-quote-fill text-primary me-2"></i>Share Your Experience</h1>
+                <p class="text-muted mb-0 small">Your testimonial helps others discover quality dental care</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="db-card p-4 p-md-5">
+
+                <div class="text-center mb-4">
+                    <div class="empty-state-icon mx-auto mb-3" style="background:linear-gradient(135deg,rgba(14,165,233,.15),rgba(6,182,212,.08))">
+                        <i class="bi bi-chat-heart-fill" style="font-size:2rem;color:var(--db-primary)"></i>
+                    </div>
+                    <h4 class="fw-700">How was your experience?</h4>
+                    <p class="text-muted small">Your testimonial will be reviewed before it's published on our home page.</p>
+                </div>
+
+                <form asp-action="SubmitTestimonial" method="post" id="testimonialForm">
+                    <div asp-validation-summary="All" class="alert alert-danger" style="display:none"></div>
+
+                    <div class="mb-4">
+                        <label asp-for="Name" class="form-label">Your Name</label>
+                        <input asp-for="Name" class="form-control" placeholder="How should we display your name?" />
+                        <span asp-validation-for="Name" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Star Rating -->
+                    <div class="mb-4">
+                        <label class="form-label d-block">Your Rating <span class="text-danger">*</span></label>
+                        <div class="star-rating-input" id="starRating">
+                            @for (int i = 5; i >= 1; i--)
+                            {
+                                <input type="radio" name="Rating" id="star@(i)" value="@i"
+                                       @(i == Model.Rating ? "checked" : "") />
+                                <label for="star@(i)" title="@i star@(i == 1 ? "" : "s")">
+                                    <i class="bi bi-star-fill"></i>
+                                </label>
+                            }
+                        </div>
+                        <div id="ratingText" class="text-muted small mt-1">Selected: <span id="selectedRating">@Model.Rating</span> stars</div>
+                        <span asp-validation-for="Rating" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Message" class="form-label">
+                            Your Message <span class="text-danger">*</span>
+                        </label>
+                        <textarea asp-for="Message" class="form-control" rows="5"
+                                  placeholder="Tell us about your experience with DentBridge — what went well, how the treatment felt, and whether you'd recommend us..."
+                                  maxlength="1000" id="messageInput"></textarea>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span asp-validation-for="Message" class="text-danger small"></span>
+                            <span class="text-muted small"><span id="charCount">0</span>/1000</span>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-info border-0 small mb-4" style="background:rgba(14,165,233,.07);color:var(--db-primary)">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Your testimonial will be reviewed by our team before appearing on the public site.
+                        This usually takes 1–2 business days.
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 fw-600 py-2" id="submitBtn">
+                        <i class="bi bi-send me-2"></i>Submit Testimonial
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+<script>
+// Character counter
+const msgInput = document.getElementById('messageInput');
+const charCount = document.getElementById('charCount');
+if (msgInput) {
+    const update = () => charCount.textContent = msgInput.value.length;
+    msgInput.addEventListener('input', update);
+    update();
+}
+
+// Star rating display
+document.querySelectorAll('#starRating input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+        document.getElementById('selectedRating').textContent = this.value;
+    });
+});
+
+// Loading state on submit
+document.getElementById('testimonialForm')?.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+
+    Swal.fire({
+        title: 'Submitting...',
+        text: 'Please wait while we save your testimonial.',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+
+    setTimeout(() => this.submit(), 300);
+});
+</script>
+}

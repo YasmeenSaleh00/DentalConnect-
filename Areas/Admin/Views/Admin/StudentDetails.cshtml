@@ -1,0 +1,90 @@
+@model DentBridge.Models.StudentProfile
+@using DentBridge.Models.Enums
+@{ ViewData["Title"] = "Student Details"; }
+
+<div class="page-header">
+    <div class="container">
+        <div class="d-flex align-items-center gap-3">
+            <a asp-area="Admin" asp-controller="Admin" asp-action="PendingStudents"
+               class="btn btn-ghost-icon"><i class="bi bi-arrow-left"></i></a>
+            <h1 class="mb-0">@Model.User.FullName</h1>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="db-card p-4 mb-4">
+                <h6 class="fw-600 mb-3">Personal Information</h6>
+                <div class="row g-3">
+                    <div class="col-md-6"><div class="text-muted small">Full Name</div><div class="fw-500">@Model.User.FullName</div></div>
+                    <div class="col-md-6"><div class="text-muted small">Email</div><div class="fw-500">@Model.User.Email</div></div>
+                    <div class="col-md-6"><div class="text-muted small">Phone</div><div class="fw-500">@(Model.User.PhoneNumber ?? "—")</div></div>
+                    <div class="col-md-6"><div class="text-muted small">City</div><div class="fw-500">@(Model.User.City ?? "—")</div></div>
+                    <div class="col-md-6"><div class="text-muted small">Date of Birth</div><div class="fw-500">@Model.User.DateOfBirth.ToString("dd MMM yyyy")</div></div>
+                    <div class="col-md-6"><div class="text-muted small">Applied On</div><div class="fw-500">@Model.User.CreatedAt.ToString("dd MMM yyyy")</div></div>
+                </div>
+            </div>
+
+            <div class="db-card p-4 mb-4">
+                <h6 class="fw-600 mb-3">Academic Information</h6>
+                <div class="row g-3">
+                    <div class="col-md-6"><div class="text-muted small">University</div><div class="fw-500">@Model.UniversityName</div></div>
+                    <div class="col-md-6"><div class="text-muted small">Student ID</div><div class="fw-500">@Model.StudentId</div></div>
+                    <div class="col-md-6"><div class="text-muted small">Specialization</div><div class="fw-500">@Model.Specialization</div></div>
+                    <div class="col-md-6"><div class="text-muted small">Academic Year</div><div class="fw-500">@Model.AcademicYear</div></div>
+                </div>
+                @if (!string.IsNullOrEmpty(Model.Bio))
+                {
+                    <hr class="my-3">
+                    <div class="text-muted small mb-1">Bio</div>
+                    <p class="mb-0">@Model.Bio</p>
+                }
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.ProofDocumentPath))
+            {
+                <div class="db-card p-4">
+                    <h6 class="fw-600 mb-3"><i class="bi bi-file-earmark-text me-2"></i>Proof Document</h6>
+                    <a href="@Model.ProofDocumentPath" target="_blank" class="btn btn-outline-primary">
+                        <i class="bi bi-download me-2"></i>View / Download Proof
+                    </a>
+                </div>
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <div class="db-card p-4 mb-4">
+                <h6 class="fw-600 mb-3">Account Status</h6>
+                @{
+                    var sc = Model.Status switch {
+                        AccountStatus.Active => "badge-status-open",
+                        AccountStatus.Pending => "badge-status-pending",
+                        AccountStatus.Rejected => "badge-status-cancelled",
+                        _ => "badge-status-cancelled"
+                    };
+                }
+                <span class="db-badge @sc fs-6">@Model.Status</span>
+            </div>
+
+            @if (Model.Status == AccountStatus.Pending)
+            {
+                <div class="db-card p-4">
+                    <h6 class="fw-600 mb-3">Actions</h6>
+                    <form asp-area="Admin" asp-controller="Admin" asp-action="ApproveStudent"
+                          asp-route-id="@Model.Id" method="post" class="mb-2">
+                        <button type="submit" class="btn btn-success w-100 fw-600"
+                                data-confirm="Approve @Model.User.FullName's account?">
+                            <i class="bi bi-check-circle me-2"></i>Approve Account
+                        </button>
+                    </form>
+                    <button type="button" class="btn btn-outline-danger w-100"
+                            onclick="rejectStudentSwal(@Model.Id, '@Html.Raw(Model.User.FullName.Replace("'", "\\'"))', '@Url.Action("RejectStudent", "Admin", new { id = Model.Id, area = "Admin" })')">
+                        <i class="bi bi-x-circle me-2"></i>Reject Application
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,79 @@
+@model IEnumerable<DentBridge.Models.ApplicationUser>
+@{ ViewData["Title"] = "All Users"; }
+
+<div class="page-header">
+    <div class="container">
+        <h1><i class="bi bi-people-fill text-primary me-2"></i>All Users
+            <span class="badge bg-secondary ms-2 fw-500">@Model.Count()</span>
+        </h1>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="db-card">
+        <div class="table-responsive">
+            <table class="table db-table mb-0">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>City</th>
+                        <th>Joined</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model)
+                    {
+                        var roles = (ViewBag.UserRoles as Dictionary<string, IList<string>>)?[user.Id];
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="avatar-initials-xs">
+                                        @(user.FirstName?.Length > 0 ? user.FirstName[0] : '?')@(user.LastName?.Length > 0 ? user.LastName[0] : '?')
+                                    </div>
+                                    <span class="fw-500">@user.FullName</span>
+                                </div>
+                            </td>
+                            <td class="text-muted small">@user.Email</td>
+                            <td>
+                                @foreach (var r in roles ?? [])
+                                {
+                                    var c = r switch {
+                                        "Admin" => "badge-status-cancelled",
+                                        "Student" => "badge-status-inprogress",
+                                        "Patient" => "badge-status-open",
+                                        _ => "badge-status-pending"
+                                    };
+                                    <span class="db-badge @c me-1">@r</span>
+                                }
+                            </td>
+                            <td class="text-muted small">@(user.City ?? "—")</td>
+                            <td class="text-muted small">@user.CreatedAt.ToString("dd MMM yyyy")</td>
+                            <td>
+                                @if (user.IsActive)
+                                {
+                                    <span class="db-badge badge-status-open">Active</span>
+                                }
+                                else
+                                {
+                                    <span class="db-badge badge-status-cancelled">Inactive</span>
+                                }
+                            </td>
+                            <td>
+                                <form asp-action="ToggleUserStatus" asp-route-id="@user.Id" method="post">
+                                    <button type="submit" class="btn btn-sm btn-outline-@(user.IsActive ? "warning" : "success") px-2"
+                                            data-confirm="@(user.IsActive ? "Deactivate" : "Activate") this user?">
+                                        @(user.IsActive ? "Deactivate" : "Activate")
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

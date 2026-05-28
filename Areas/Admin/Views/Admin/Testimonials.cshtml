@@ -1,0 +1,107 @@
+@model DentBridge.Areas.Admin.Models.AdminTestimonialsViewModel
+@using DentBridge.Models.Enums
+@{ ViewData["Title"] = "Testimonials Management"; }
+
+<div class="page-header">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div>
+                <h1 class="mb-1"><i class="bi bi-chat-quote-fill text-primary me-2"></i>Testimonials</h1>
+                <p class="text-muted mb-0 small">@Model.TotalCount total · @Model.Pending.Count() pending</p>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                @foreach (var f in new[] { (TestimonialStatus?)null, TestimonialStatus.Pending, TestimonialStatus.Approved, TestimonialStatus.Rejected })
+                {
+                    var label = f?.ToString() ?? "All";
+                    var css = Model.Filter == f ? "btn-primary" : "btn-outline-secondary";
+                    <a asp-area="Admin" asp-controller="Admin" asp-action="Testimonials"
+                       asp-route-filter="@f?.ToString()" class="btn btn-sm @css">@label</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+
+    @if (!Model.Filtered.Any())
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon"><i class="bi bi-chat-square-text"></i></div>
+            <h4 class="fw-600">No testimonials found</h4>
+            <p class="text-muted">Testimonials submitted by patients and students will appear here.</p>
+        </div>
+    }
+    else
+    {
+        <!-- Pending first (if showing all) -->
+        @if (Model.Filter == null && Model.Pending.Any())
+        {
+            <div class="mb-4">
+                <h5 class="fw-600 mb-3">
+                    <span class="db-badge badge-status-pending me-2">@Model.Pending.Count()</span>
+                    Awaiting Review
+                </h5>
+                <div class="row g-4">
+                    @foreach (var t in Model.Pending)
+                    {
+                        <div class="col-lg-6">
+                            @await Html.PartialAsync("_TestimonialCard", t)
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Filtered list -->
+        @if (Model.Filter != null || !Model.Filter.HasValue)
+        {
+            <div class="row g-4">
+                @foreach (var t in Model.Filtered)
+                {
+                    <div class="col-lg-6">
+                        @await Html.PartialAsync("_TestimonialCard", t)
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+
+@section Scripts {
+<script>
+// Reject testimonial via SweetAlert2
+window.rejectTestimonialSwal = async function(id, name, actionUrl) {
+    const { value: notes, isConfirmed } = await Swal.fire({
+        title: 'Reject Testimonial',
+        html: `Rejecting <strong>${name}</strong>'s testimonial.`,
+        input: 'textarea',
+        inputPlaceholder: 'Optional reason (internal only)...',
+        inputAttributes: { rows: '3', style: 'resize:none;margin-top:.75rem;font-size:.875rem' },
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        confirmButtonText: 'Reject',
+        cancelButtonText: 'Cancel',
+        reverseButtons: true
+    });
+    if (isConfirmed) {
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.action = actionUrl;
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value;
+        if (token) {
+            const t = document.createElement('input');
+            t.type = 'hidden'; t.name = '__RequestVerificationToken'; t.value = token;
+            form.appendChild(t);
+        }
+        if (notes) {
+            const n = document.createElement('input');
+            n.type = 'hidden'; n.name = 'notes'; n.value = notes;
+            form.appendChild(n);
+        }
+        document.body.appendChild(form);
+        form.submit();
+    }
+};
+</script>
+}

@@ -1,0 +1,76 @@
+@model IEnumerable<DentBridge.Models.DentalCase>
+@using DentBridge.Models.Enums
+@{ ViewData["Title"] = "All Cases"; }
+
+<div class="page-header">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <h1><i class="bi bi-folder2-open text-primary me-2"></i>All Cases</h1>
+            <div class="d-flex gap-2 flex-wrap">
+                @foreach (var s in new[] { (CaseStatus?)null, CaseStatus.Open, CaseStatus.InProgress, CaseStatus.Completed, CaseStatus.Cancelled })
+                {
+                    var label = s?.ToString() ?? "All";
+                    var css = ViewBag.SelectedStatus == s ? "btn-primary" : "btn-outline-secondary";
+                    <a asp-action="AllCases" asp-route-status="@s?.ToString()" class="btn btn-sm @css">@label</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="db-card">
+        <div class="table-responsive">
+            <table class="table db-table mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Case Title</th>
+                        <th>Patient</th>
+                        <th>Treatment</th>
+                        <th>Student</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model)
+                    {
+                        var sc = c.Status switch {
+                            CaseStatus.Open => "badge-status-open",
+                            CaseStatus.InProgress => "badge-status-inprogress",
+                            CaseStatus.Completed => "badge-status-completed",
+                            _ => "badge-status-cancelled"
+                        };
+                        <tr>
+                            <td class="text-muted small">#@c.Id</td>
+                            <td>
+                                <div class="fw-500">@c.Title</div>
+                                @if (!string.IsNullOrEmpty(c.UrgencyLevel) && c.UrgencyLevel != "Normal")
+                                {
+                                    <span class="db-badge badge-status-cancelled" style="font-size:.65rem">@c.UrgencyLevel</span>
+                                }
+                            </td>
+                            <td class="small">@c.Patient?.User?.FullName</td>
+                            <td><span class="text-muted small">@c.TreatmentType</span></td>
+                            <td class="small">
+                                @(c.AssignedStudent?.User?.FullName ?? "—")
+                            </td>
+                            <td><span class="db-badge @sc">@c.Status</span></td>
+                            <td class="text-muted small">@c.CreatedAt.ToString("dd MMM")</td>
+                            <td>
+                                <a asp-action="CaseDetails" asp-route-id="@c.Id"
+                                   class="btn btn-sm btn-outline-primary px-2">Details</a>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr><td colspan="8" class="text-center text-muted py-5">No cases found.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

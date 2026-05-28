@@ -1,0 +1,135 @@
+@model DentBridge.ViewModels.Case.CreateCaseViewModel
+@using DentBridge.Models.Enums
+@{ ViewData["Title"] = "Post a Dental Case"; }
+
+<div class="page-header">
+    <div class="container">
+        <div class="d-flex align-items-center gap-3">
+            <a asp-controller="Patient" asp-action="Dashboard" class="btn btn-ghost-icon"><i class="bi bi-arrow-left"></i></a>
+            <h1 class="mb-0">Post a New Dental Case</h1>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+
+            <!-- Progress hint -->
+            <div class="alert alert-info d-flex gap-3 align-items-start mb-4">
+                <i class="bi bi-lightbulb-fill fs-5 flex-shrink-0 mt-1"></i>
+                <div>
+                    <strong>Tips for a great case post:</strong>
+                    <ul class="mb-0 mt-1 small">
+                        <li>Be specific about your symptoms and what treatment you need</li>
+                        <li>Add clear photos of the affected area if possible</li>
+                        <li>Mention your preferred location so students can find you</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="db-card p-4">
+                <form asp-action="CreateCase" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+
+                    <h6 class="fw-600 text-muted text-uppercase small mb-3">Case Details</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-12">
+                            <label asp-for="Title" class="form-label">Case Title</label>
+                            <input asp-for="Title" class="form-control"
+                                   placeholder="e.g., Need teeth cleaning and filling for cavity" />
+                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="TreatmentType" class="form-label">Treatment Type</label>
+                            <select asp-for="TreatmentType" class="form-select"
+                                    asp-items="Html.GetEnumSelectList<TreatmentType>()"></select>
+                            <span asp-validation-for="TreatmentType" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="UrgencyLevel" class="form-label">Urgency Level</label>
+                            <select asp-for="UrgencyLevel" class="form-select">
+                                <option value="Normal">Normal – Within a month</option>
+                                <option value="Soon">Soon – Within 1–2 weeks</option>
+                                <option value="Urgent">Urgent – This week</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Description" class="form-label">Describe Your Case</label>
+                            <textarea asp-for="Description" class="form-control" rows="5"
+                                      placeholder="Describe your dental issue in detail — symptoms, duration, any previous treatments..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Location" class="form-label">
+                                Preferred Location <span class="text-muted">(optional)</span>
+                            </label>
+                            <input asp-for="Location" class="form-control" placeholder="e.g., Riyadh – North Ring Road" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="AppointmentDate" class="form-label">
+                                Preferred Date <span class="text-muted">(optional)</span>
+                            </label>
+                            <input asp-for="AppointmentDate" type="date" class="form-control"
+                                   min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" />
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="PatientNotes" class="form-label">
+                                Additional Notes <span class="text-muted">(optional)</span>
+                            </label>
+                            <textarea asp-for="PatientNotes" class="form-control" rows="2"
+                                      placeholder="Any allergies, medical conditions, or special requests..."></textarea>
+                        </div>
+                    </div>
+
+                    <hr class="my-3">
+                    <h6 class="fw-600 text-muted text-uppercase small mb-3">Case Images <span class="text-muted fw-400">(optional, up to 5)</span></h6>
+
+                    <div class="upload-zone mb-3">
+                        <input asp-for="Images" type="file" accept="image/*" multiple
+                               class="d-none" id="imageInput" />
+                        <i class="bi bi-camera fs-1 text-muted mb-2 d-block"></i>
+                        <div class="fw-600">Drop images here or click to upload</div>
+                        <small class="text-muted">JPG, PNG, WebP up to 5 MB each · Helps students understand your case better</small>
+                        <div id="previewArea" class="d-flex flex-wrap gap-2 mt-3 justify-content-center"></div>
+                    </div>
+
+                    <div class="d-flex gap-3 mt-4">
+                        <a asp-controller="Patient" asp-action="Dashboard"
+                           class="btn btn-outline-secondary px-4">Cancel</a>
+                        <button type="submit" class="btn btn-primary flex-grow-1 py-2 fw-600">
+                            <i class="bi bi-send me-2"></i>Post My Case
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+@{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+<script>
+const imageInput = document.getElementById('imageInput');
+const previewArea = document.getElementById('previewArea');
+
+document.querySelector('.upload-zone').addEventListener('click', () => imageInput.click());
+
+imageInput.addEventListener('change', function () {
+    previewArea.innerHTML = '';
+    Array.from(this.files).slice(0, 5).forEach(file => {
+        const url = URL.createObjectURL(file);
+        const img = document.createElement('img');
+        img.src = url;
+        img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid var(--db-border)';
+        previewArea.appendChild(img);
+    });
+});
+</script>
+}

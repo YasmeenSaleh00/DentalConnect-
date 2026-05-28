@@ -1,0 +1,100 @@
+@model IEnumerable<DentBridge.Models.StudentProfile>
+@{ ViewData["Title"] = "Pending Student Approvals"; }
+
+<div class="page-header">
+    <div class="container">
+        <h1><i class="bi bi-person-check text-warning me-2"></i>Pending Approvals
+            <span class="badge bg-warning text-dark ms-2">@Model.Count()</span>
+        </h1>
+    </div>
+</div>
+
+<div class="container pb-5">
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon"><i class="bi bi-check-all"></i></div>
+            <h4 class="fw-600">All caught up!</h4>
+            <p class="text-muted">No pending student applications at this time.</p>
+            <a asp-controller="Admin" asp-action="Index" class="btn btn-primary">Back to Dashboard</a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var student in Model)
+            {
+                <div class="col-lg-6">
+                    <div class="db-card p-4">
+                        <div class="d-flex gap-3 align-items-start mb-3">
+                            <div class="avatar-initials-xs" style="width:52px;height:52px;font-size:1.2rem;flex-shrink:0">
+                                @student.User.FirstName[0]@student.User.LastName[0]
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="fw-700 fs-5">@student.User.FullName</div>
+                                <div class="text-muted small">@student.User.Email</div>
+                                <div class="text-muted small">@student.User.PhoneNumber · @student.User.City</div>
+                            </div>
+                            <span class="db-badge badge-status-pending">Pending</span>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <div class="text-muted small">University</div>
+                                <div class="fw-600 small">@student.UniversityName</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-muted small">Student ID</div>
+                                <div class="fw-600 small">@student.StudentId</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-muted small">Specialization</div>
+                                <div class="fw-600 small">@student.Specialization</div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-muted small">Applied</div>
+                                <div class="fw-600 small">@student.User.CreatedAt.ToString("dd MMM yyyy")</div>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(student.Bio))
+                        {
+                            <p class="text-muted small mb-3 fst-italic">"@student.Bio"</p>
+                        }
+
+                        @if (!string.IsNullOrEmpty(student.ProofDocumentPath))
+                        {
+                            <a href="@student.ProofDocumentPath" target="_blank"
+                               class="btn btn-sm btn-outline-secondary mb-3">
+                                <i class="bi bi-file-earmark-text me-1"></i>View Proof Document
+                            </a>
+                        }
+
+                        <div class="d-flex gap-2">
+                            <!-- Approve -->
+                            <form asp-action="ApproveStudent" asp-route-id="@student.Id" method="post" class="flex-grow-1">
+                                <button type="submit" class="btn btn-success w-100 fw-600"
+                                        data-confirm="Approve this student account?">
+                                    <i class="bi bi-check-circle me-2"></i>Approve
+                                </button>
+                            </form>
+
+                            <!-- Reject -->
+                            <button type="button" class="btn btn-outline-danger fw-600"
+                                    onclick="rejectStudentSwal(@student.Id, '@Html.Raw(student.User.FullName.Replace("'", "\\'"))', '@Url.Action("RejectStudent", "Admin", new { id = student.Id })')">
+                                <i class="bi bi-x-circle me-1"></i>Reject
+                            </button>
+
+                            <!-- Details -->
+                            <a asp-controller="Admin" asp-action="StudentDetails" asp-route-id="@student.Id"
+                               class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            }
+        </div>
+    }
+</div>

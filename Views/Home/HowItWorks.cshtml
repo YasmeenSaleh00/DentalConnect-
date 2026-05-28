@@ -1,0 +1,64 @@
+@{ ViewData["Title"] = "How It Works"; }
+
+<div class="page-header">
+    <div class="container text-center">
+        <h1 class="fw-700">How DentBridge Works</h1>
+        <p class="text-muted">Simple, transparent, and designed for everyone</p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row g-5">
+        <div class="col-lg-6">
+            <span class="section-tag">For Patients</span>
+            <h3 class="fw-700 mt-2 mb-4">Get Quality Dental Care</h3>
+            @foreach (var (icon, title, desc) in new[] {
+                ("bi-person-plus", "Create an Account", "Sign up as a patient in under 2 minutes. No credit card required."),
+                ("bi-file-medical", "Post Your Case", "Describe your dental issue, select the treatment type, and add photos."),
+                ("bi-person-check", "Get Matched", "A qualified dental student reviews your case and accepts it."),
+                ("bi-calendar-check", "Attend Appointment", "Go to the dental clinic for supervised, professional treatment."),
+                ("bi-star", "Leave a Review", "Rate your experience to help future patients choose great students."),
+            })
+            {
+                <div class="d-flex gap-3 mb-3">
+                    <div class="step-circle" style="width:42px;height:42px;font-size:1rem;flex-shrink:0">
+                        <i class="bi @icon"></i>
+                    </div>
+                    <div>
+                        <div class="fw-600">@title</div>
+                        <div class="text-muted small">@desc</div>
+                    </div>
+                </div>
+            }
+            <a asp-controller="Account" asp-action="RegisterPatient" class="btn btn-primary mt-3 px-4">
+                Start as Patient
+            </a>
+        </div>
+
+        <div class="col-lg-6">
+            <span class="section-tag">For Students</span>
+            <h3 class="fw-700 mt-2 mb-4">Build Your Clinical Portfolio</h3>
+            @foreach (var (icon, title, desc) in new[] {
+                ("bi-mortarboard", "Apply for an Account", "Submit your student ID and enrollment proof for verification."),
+                ("bi-clock-history", "Wait for Approval", "Our admin team verifies your credentials within 24–48 hours."),
+                ("bi-search", "Browse Cases", "Filter cases by treatment type, location, and urgency."),
+                ("bi-check-circle", "Accept a Case", "Choose a case you're qualified for and accept it."),
+                ("bi-trophy", "Complete & Earn Reviews", "Treat the patient and build your professional reputation."),
+            })
+            {
+                <div class="d-flex gap-3 mb-3">
+                    <div class="step-circle" style="width:42px;height:42px;font-size:1rem;flex-shrink:0">
+                        <i class="bi @icon"></i>
+                    </div>
+                    <div>
+                        <div class="fw-600">@title</div>
+                        <div class="text-muted small">@desc</div>
+                    </div>
+                </div>
+            }
+            <a asp-controller="Account" asp-action="RegisterStudent" class="btn btn-outline-primary mt-3 px-4">
+                Apply as Student
+            </a>
+        </div>
+    </div>
+</div>

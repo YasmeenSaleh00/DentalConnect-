@@ -1,0 +1,144 @@
+@model DentBridge.ViewModels.Account.StudentRegisterViewModel
+@{ ViewData["Title"] = "Register as Student"; }
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="text-center mb-4">
+                <i class="bi bi-mortarboard-fill text-primary" style="font-size:2.5rem"></i>
+                <h2 class="fw-700 mt-2 mb-1">Apply as Dental Student</h2>
+                <p class="text-muted">5th-year students only · Account reviewed within 24–48 hours</p>
+            </div>
+
+            <!-- Info Banner -->
+            <div class="alert alert-info d-flex gap-3 align-items-start mb-4">
+                <i class="bi bi-info-circle-fill fs-5 flex-shrink-0 mt-1"></i>
+                <div>
+                    <strong>Verification Required</strong><br>
+                    <small>Upload your student ID or official enrollment letter. Your account will be active once an admin verifies your documents.</small>
+                </div>
+            </div>
+
+            <div class="db-card p-4">
+                <form asp-action="RegisterStudent" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+
+                    <h6 class="fw-600 text-muted text-uppercase small mb-3">Personal Information</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-6">
+                            <label asp-for="FirstName" class="form-label">First Name</label>
+                            <input asp-for="FirstName" class="form-control" placeholder="Sara" />
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="LastName" class="form-label">Last Name</label>
+                            <input asp-for="LastName" class="form-control" placeholder="Ahmed" />
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Email" class="form-label">Email Address</label>
+                            <input asp-for="Email" class="form-control" placeholder="you@university.edu.sa" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                            <input asp-for="PhoneNumber" class="form-control" placeholder="05xxxxxxxx" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="City" class="form-label">City</label>
+                            <input asp-for="City" class="form-control" placeholder="Riyadh" />
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                            <input asp-for="DateOfBirth" type="date" class="form-control" />
+                            <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <hr class="my-3">
+                    <h6 class="fw-600 text-muted text-uppercase small mb-3">Academic Information</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-7">
+                            <label asp-for="UniversityName" class="form-label">University Name</label>
+                            <input asp-for="UniversityName" class="form-control" placeholder="King Saud University" />
+                            <span asp-validation-for="UniversityName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-5">
+                            <label asp-for="StudentId" class="form-label">Student ID</label>
+                            <input asp-for="StudentId" class="form-control" placeholder="KSU-2021-xxxx" />
+                            <span asp-validation-for="StudentId" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Specialization" class="form-label">Specialization Area</label>
+                            <select asp-for="Specialization" class="form-select">
+                                <option value="">Select specialization...</option>
+                                <option>General Dentistry</option>
+                                <option>Orthodontics</option>
+                                <option>Prosthodontics</option>
+                                <option>Periodontics</option>
+                                <option>Endodontics</option>
+                                <option>Oral Surgery</option>
+                                <option>Pedodontics</option>
+                            </select>
+                            <span asp-validation-for="Specialization" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Bio" class="form-label">Short Bio <span class="text-muted">(optional)</span></label>
+                            <textarea asp-for="Bio" class="form-control" rows="3"
+                                      placeholder="Tell patients a bit about your clinical experience..."></textarea>
+                        </div>
+                    </div>
+
+                    <hr class="my-3">
+                    <h6 class="fw-600 text-muted text-uppercase small mb-3">Proof Document</h6>
+                    <div class="upload-zone mb-3" id="uploadZone">
+                        <input asp-for="ProofDocument" type="file" accept=".pdf,.jpg,.jpeg,.png"
+                               class="d-none" id="proofInput" />
+                        <i class="bi bi-cloud-upload fs-1 text-muted mb-2 d-block"></i>
+                        <div class="fw-600">Drop your document here or click to browse</div>
+                        <small class="text-muted">PDF, JPG, PNG up to 10 MB · Student ID, Enrollment Letter</small>
+                        <div id="fileName" class="mt-2 text-primary small"></div>
+                    </div>
+                    <span asp-validation-for="ProofDocument" class="text-danger small"></span>
+
+                    <hr class="my-3">
+                    <h6 class="fw-600 text-muted text-uppercase small mb-3">Password</h6>
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label asp-for="Password" class="form-label">Password</label>
+                            <input asp-for="Password" class="form-control" placeholder="Min. 8 characters" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                            <input asp-for="ConfirmPassword" class="form-control" placeholder="Repeat password" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 py-2 fw-600">
+                        <i class="bi bi-send me-2"></i>Submit Application
+                    </button>
+                </form>
+            </div>
+
+            <p class="text-center text-muted mt-3 small">
+                Already have an account?
+                <a asp-controller="Account" asp-action="Login" class="text-primary fw-600">Sign In</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+@{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+<script>
+document.getElementById('uploadZone').addEventListener('click', () =>
+    document.getElementById('proofInput').click());
+document.getElementById('proofInput').addEventListener('change', function () {
+    if (this.files[0])
+        document.getElementById('fileName').textContent = '✓ ' + this.files[0].name;
+});
+</script>
+}

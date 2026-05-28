@@ -1,0 +1,93 @@
+@model DentBridge.Models.Testimonial
+@using DentBridge.Models.Enums
+
+@{
+    var statusCss = Model.Status switch {
+        TestimonialStatus.Approved => "badge-status-open",
+        TestimonialStatus.Rejected => "badge-status-cancelled",
+        _ => "badge-status-pending"
+    };
+}
+
+<div class="db-card p-4 h-100">
+    <div class="d-flex align-items-start gap-3 mb-3">
+        <div class="avatar-initials-xs flex-shrink-0"
+             style="width:46px;height:46px;font-size:1.1rem">
+            @Model.Name[0]
+        </div>
+        <div class="flex-grow-1">
+            <div class="fw-700">@Model.Name</div>
+            <div class="text-muted small">@Model.Role</div>
+            <div class="text-muted" style="font-size:.75rem">@Model.CreatedAt.ToString("dd MMM yyyy")</div>
+        </div>
+        <span class="db-badge @statusCss">@Model.Status</span>
+    </div>
+
+    <!-- Stars -->
+    <div class="stars mb-2">
+        @for (int i = 1; i <= 5; i++)
+        {
+            <i class="bi bi-star@(i <= Model.Rating ? "-fill" : "")"></i>
+        }
+        <span class="text-muted small ms-1">@Model.Rating / 5</span>
+    </div>
+
+    <!-- Message -->
+    <p class="text-muted fst-italic mb-3" style="font-size:.9rem">"@Model.Message"</p>
+
+    <!-- Actions -->
+    @if (Model.Status == TestimonialStatus.Pending)
+    {
+        <div class="d-flex gap-2">
+            <form asp-area="Admin" asp-controller="Admin" asp-action="ApproveTestimonial"
+                  asp-route-id="@Model.Id" method="post" class="flex-grow-1">
+                <button type="submit" class="btn btn-success btn-sm w-100 fw-600">
+                    <i class="bi bi-check-circle me-1"></i>Approve
+                </button>
+            </form>
+            <button type="button" class="btn btn-outline-danger btn-sm"
+                    onclick="rejectTestimonialSwal(@Model.Id, '@Html.Raw(Model.Name.Replace("'", "\\'"))', '@Url.Action("RejectTestimonial", "Admin", new { id = Model.Id, area = "Admin" })')">
+                <i class="bi bi-x-circle me-1"></i>Reject
+            </button>
+            <form asp-area="Admin" asp-controller="Admin" asp-action="DeleteTestimonial"
+                  asp-route-id="@Model.Id" method="post">
+                <button type="submit" class="btn btn-outline-secondary btn-sm"
+                        data-confirm="Permanently delete this testimonial?">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <div class="d-flex gap-2">
+            @if (Model.Status == TestimonialStatus.Approved)
+            {
+                <form asp-area="Admin" asp-controller="Admin" asp-action="RejectTestimonial"
+                      asp-route-id="@Model.Id" method="post" class="flex-grow-1">
+                    <input type="hidden" name="notes" value="" />
+                    <button type="submit" class="btn btn-outline-warning btn-sm w-100"
+                            data-confirm="Unpublish this testimonial?">
+                        <i class="bi bi-eye-slash me-1"></i>Unpublish
+                    </button>
+                </form>
+            }
+            @if (Model.Status == TestimonialStatus.Rejected)
+            {
+                <form asp-area="Admin" asp-controller="Admin" asp-action="ApproveTestimonial"
+                      asp-route-id="@Model.Id" method="post" class="flex-grow-1">
+                    <button type="submit" class="btn btn-outline-success btn-sm w-100">
+                        <i class="bi bi-check-circle me-1"></i>Approve
+                    </button>
+                </form>
+            }
+            <form asp-area="Admin" asp-controller="Admin" asp-action="DeleteTestimonial"
+                  asp-route-id="@Model.Id" method="post">
+                <button type="submit" class="btn btn-outline-danger btn-sm"
+                        data-confirm="Permanently delete this testimonial?">
+                    <i class="bi bi-trash"></i>
+                </button>
+            </form>
+        </div>
+    }
+</div>

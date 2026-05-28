@@ -1,0 +1,278 @@
+@{
+    ViewData["Title"] = "DentBridge – Affordable Dental Care";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- HERO -->
+<section class="db-hero">
+    <div class="container db-hero-content">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <span class="badge mb-3 fs-7 px-3 py-2">🦷 Trusted by 500+ Patients</span>
+                <h1 class="mb-4">
+                    Quality Dental Care,<br>
+                    <span class="gradient-text">Made Affordable</span>
+                </h1>
+                <p class="mb-4" style="font-size:1.1rem">
+                    DentBridge connects verified 5th-year dental students with patients
+                    who need accessible, professional dental treatment — at little to no cost.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a asp-controller="Account" asp-action="RegisterPatient"
+                       class="btn btn-primary btn-lg px-4 py-2">
+                        <i class="bi bi-person-plus me-2"></i>Find a Student Dentist
+                    </a>
+                    <a asp-controller="Account" asp-action="RegisterStudent"
+                       class="btn btn-outline-light btn-lg px-4 py-2">
+                        <i class="bi bi-mortarboard me-2"></i>Join as Student
+                    </a>
+                </div>
+                <div class="d-flex gap-4 mt-4">
+                    <div class="text-center">
+                        <div style="color:white;font-weight:700;font-size:1.5rem">500+</div>
+                        <div style="color:rgba(255,255,255,.6);font-size:.82rem">Patients Treated</div>
+                    </div>
+                    <div class="text-center">
+                        <div style="color:white;font-weight:700;font-size:1.5rem">120+</div>
+                        <div style="color:rgba(255,255,255,.6);font-size:.82rem">Active Students</div>
+                    </div>
+                    <div class="text-center">
+                        <div style="color:white;font-weight:700;font-size:1.5rem">4.8★</div>
+                        <div style="color:rgba(255,255,255,.6);font-size:.82rem">Avg. Rating</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center d-none d-lg-block">
+                <div style="background:rgba(14,165,233,.1);border:1px solid rgba(14,165,233,.2);
+                            border-radius:20px;padding:3rem;backdrop-filter:blur(10px)">
+                    <i class="bi bi-heart-pulse-fill" style="font-size:8rem;color:rgba(14,165,233,.7)"></i>
+                    <p class="mt-3" style="color:rgba(255,255,255,.6)">Supervised clinical experience meets patient care</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TREATMENT TYPES -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-tag">Treatments Available</span>
+            <h2 class="fw-700">What We Cover</h2>
+            <p class="text-muted">Our students are trained in all major dental disciplines</p>
+        </div>
+        <div class="row g-3">
+            @foreach (var item in new[] {
+                ("bi-tooth", "General Dentistry", "Cleanings, fillings, and preventive care", "blue"),
+                ("bi-arrows-angle-expand", "Orthodontics", "Braces and teeth alignment", "cyan"),
+                ("bi-grid-3x3-gap", "Prosthodontics", "Crowns, bridges, and dentures", "green"),
+                ("bi-clipboard-heart", "Periodontics", "Gum disease treatment", "yellow"),
+                ("bi-activity", "Endodontics", "Root canal and pulp treatment", "red"),
+                ("bi-scalpel", "Oral Surgery", "Extractions and minor surgical procedures", "purple"),
+                ("bi-emoji-smile", "Cosmetic Dentistry", "Whitening and aesthetic procedures", "cyan"),
+                ("bi-person-hearts", "Pedodontics", "Dental care for children", "green"),
+            })
+            {
+                <div class="col-md-6 col-lg-3">
+                    <div class="db-card p-3 db-card-hover h-100">
+                        <div class="stat-icon @item.Item4 mb-3">
+                            <i class="bi @item.Item1"></i>
+                        </div>
+                        <h6 class="fw-600 mb-1">@item.Item2</h6>
+                        <p class="text-muted small mb-0">@item.Item3</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="py-5 bg-white">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-tag">Simple Process</span>
+            <h2 class="fw-700">How DentBridge Works</h2>
+        </div>
+        <div class="row g-4 text-center">
+            @foreach (var step in new[] {
+                ("1", "bi-person-plus", "Create Account", "Register as a patient — it takes under 2 minutes."),
+                ("2", "bi-file-medical", "Post Your Case", "Describe your dental need, add photos, and submit."),
+                ("3", "bi-person-check", "Get Matched", "A verified dental student reviews and accepts your case."),
+                ("4", "bi-calendar-check", "Get Treated", "Attend your appointment and receive professional care."),
+            })
+            {
+                <div class="col-md-3">
+                    <div class="step-circle"><i class="bi @step.Item2"></i></div>
+                    <h5 class="fw-600 mb-2">@step.Item3</h5>
+                    <p class="text-muted small">@step.Item4</p>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- WHY DENTBRIDGE -->
+<section class="py-5">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-5">
+                <span class="section-tag">Why Choose Us</span>
+                <h2 class="fw-700 mt-2 mb-4">Safe, Supervised, Affordable Dental Care</h2>
+                @foreach (var feat in new[] {
+                    ("bi-shield-check", "Verified Students", "Every student is a 5th-year verified dental student with admin approval."),
+                    ("bi-eye", "Supervised Clinics", "All treatments are performed under certified supervisor oversight."),
+                    ("bi-currency-dollar", "Free or Low Cost", "Reduce or eliminate your dental bills without compromising quality."),
+                    ("bi-star-fill", "Rated & Reviewed", "Transparent ratings help you choose the best student for your needs."),
+                })
+                {
+                    <div class="d-flex gap-3 mb-3">
+                        <div class="stat-icon blue flex-shrink-0" style="width:42px;height:42px">
+                            <i class="bi @feat.Item1" style="font-size:1.1rem"></i>
+                        </div>
+                        <div>
+                            <div class="fw-600">@feat.Item2</div>
+                            <div class="text-muted small">@feat.Item3</div>
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="col-lg-7">
+                <div class="row g-3">
+                    @foreach (var stat in new[] {
+                        ("bi-people-fill", "500+", "Patients Helped", "green"),
+                        ("bi-mortarboard-fill", "120+", "Active Students", "blue"),
+                        ("bi-star-fill", "4.8/5", "Average Rating", "yellow"),
+                        ("bi-check-circle-fill", "98%", "Success Rate", "cyan"),
+                    })
+                    {
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-icon @stat.Item4"><i class="bi @stat.Item1"></i></div>
+                                <div>
+                                    <div class="stat-value">@stat.Item2</div>
+                                    <div class="stat-label">@stat.Item3</div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TESTIMONIALS -->
+@{
+    var testimonials = ViewBag.Testimonials as List<DentBridge.Models.Testimonial> ?? new();
+}
+@if (testimonials.Any())
+{
+<section class="py-5 bg-white" id="testimonials">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="section-tag">Real Stories</span>
+            <h2 class="fw-700">What Our Community Says</h2>
+            <p class="text-muted">Trusted by patients and students across the region</p>
+        </div>
+
+        <!-- Carousel -->
+        <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+            <div class="carousel-inner">
+                @{
+                    var groups = testimonials.Select((t, i) => new { t, i })
+                        .GroupBy(x => x.i / 3)
+                        .ToList();
+                    int gIdx = 0;
+                }
+                @foreach (var group in groups)
+                {
+                    <div class="carousel-item @(gIdx == 0 ? "active" : "")">
+                        <div class="row g-4 px-2">
+                            @foreach (var item in group)
+                            {
+                                var t = item.t;
+                                <div class="col-md-4">
+                                    <div class="db-card p-4 h-100 testimonial-card">
+                                        <!-- Quote icon -->
+                                        <div class="mb-3" style="color:var(--db-primary);opacity:.25;font-size:2.5rem;line-height:1">
+                                            <i class="bi bi-quote"></i>
+                                        </div>
+                                        <!-- Stars -->
+                                        <div class="stars mb-3">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                <i class="bi bi-star@(i <= t.Rating ? "-fill" : "")" style="font-size:.9rem"></i>
+                                            }
+                                        </div>
+                                        <!-- Message -->
+                                        <p class="text-muted mb-4" style="font-size:.9rem;line-height:1.7;font-style:italic">
+                                            "@t.Message"
+                                        </p>
+                                        <!-- Author -->
+                                        <div class="d-flex align-items-center gap-3 mt-auto">
+                                            <div class="avatar-initials-xs" style="width:44px;height:44px;font-size:1.1rem;flex-shrink:0">
+                                                @t.Name[0]
+                                            </div>
+                                            <div>
+                                                <div class="fw-700 small">@t.Name</div>
+                                                <div class="text-muted" style="font-size:.75rem">
+                                                    <span class="db-badge @(t.Role == "Patient" ? "badge-status-open" : "badge-status-inprogress")"
+                                                          style="font-size:.65rem;padding:.15rem .5rem">@t.Role</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    gIdx++;
+                }
+            </div>
+
+            @if (groups.Count > 1)
+            {
+                <div class="d-flex justify-content-center gap-2 mt-4">
+                    <button class="btn btn-ghost-icon carousel-control-prev-btn"
+                            style="width:auto;height:auto;padding:.5rem .75rem;border-radius:var(--radius-sm);border:1px solid var(--db-border)"
+                            type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <div class="carousel-indicators-custom d-flex align-items-center gap-2">
+                        @for (int i = 0; i < groups.Count; i++)
+                        {
+                            <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="@i"
+                                    class="@(i == 0 ? "active" : "")"
+                                    style="width:8px;height:8px;border-radius:50%;border:none;background:@(i == 0 ? "var(--db-primary)" : "var(--db-border)");padding:0;transition:background .2s"></button>
+                        }
+                    </div>
+                    <button class="btn btn-ghost-icon carousel-control-next-btn"
+                            style="width:auto;height:auto;padding:.5rem .75rem;border-radius:var(--radius-sm);border:1px solid var(--db-border)"
+                            type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+}
+
+<!-- CTA -->
+<section class="py-5" style="background:linear-gradient(135deg,var(--db-primary),var(--db-accent))">
+    <div class="container text-center text-white py-3">
+        <h2 class="fw-700 mb-3">Ready to Get Started?</h2>
+        <p class="mb-4" style="opacity:.85">Join thousands of patients who have received quality dental care through DentBridge.</p>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a asp-controller="Account" asp-action="RegisterPatient"
+               class="btn btn-light btn-lg px-4" style="color:var(--db-primary);font-weight:600">
+                I Need Dental Care
+            </a>
+            <a asp-controller="Account" asp-action="RegisterStudent"
+               class="btn btn-outline-light btn-lg px-4">
+                I'm a Dental Student
+            </a>
+        </div>
+    </div>
+</section>

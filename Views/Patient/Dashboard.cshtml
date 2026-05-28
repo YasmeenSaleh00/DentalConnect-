@@ -1,0 +1,155 @@
+@model DentBridge.ViewModels.Case.CaseDashboardViewModel
+@using DentBridge.Models.Enums
+@{ ViewData["Title"] = "My Dashboard"; }
+
+<div class="page-header">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div>
+                <h1 class="mb-0">Welcome back, @Model.PatientName.Split(' ')[0]! 👋</h1>
+                <p class="text-muted mb-0 small">Track your dental cases and appointments</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a asp-controller="Patient" asp-action="SubmitTestimonial"
+                   class="btn btn-outline-primary fw-600">
+                    <i class="bi bi-chat-quote me-2"></i>Share Review
+                </a>
+                <a asp-controller="Patient" asp-action="CreateCase" class="btn btn-primary fw-600">
+                    <i class="bi bi-plus-circle me-2"></i>Post New Case
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+
+    <!-- Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon cyan"><i class="bi bi-folder-fill"></i></div>
+                <div>
+                    <div class="stat-value">@Model.TotalCases</div>
+                    <div class="stat-label">Total Cases</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="bi bi-folder2-open"></i></div>
+                <div>
+                    <div class="stat-value">@Model.OpenCases</div>
+                    <div class="stat-label">Open</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="bi bi-activity"></i></div>
+                <div>
+                    <div class="stat-value">@Model.InProgressCases</div>
+                    <div class="stat-label">In Progress</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon yellow"><i class="bi bi-check-circle-fill"></i></div>
+                <div>
+                    <div class="stat-value">@Model.CompletedCases</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cases -->
+    @if (!Model.MyCases.Any())
+    {
+        <div class="db-card">
+            <div class="empty-state">
+                <div class="empty-state-icon"><i class="bi bi-file-medical"></i></div>
+                <h4 class="fw-600">No cases yet</h4>
+                <p class="text-muted">Post your first dental case to get matched with a student dentist.</p>
+                <a asp-controller="Patient" asp-action="CreateCase" class="btn btn-primary px-4">
+                    <i class="bi bi-plus-circle me-2"></i>Post My First Case
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <h5 class="fw-600 mb-3">My Cases</h5>
+        <div class="row g-3">
+            @foreach (var c in Model.MyCases)
+            {
+                var statusClass = c.Status switch {
+                    CaseStatus.Open => "badge-status-open",
+                    CaseStatus.InProgress => "badge-status-inprogress",
+                    CaseStatus.Completed => "badge-status-completed",
+                    _ => "badge-status-cancelled"
+                };
+                <div class="col-md-6 col-lg-4">
+                    <a asp-controller="Patient" asp-action="CaseDetails" asp-route-id="@c.Id"
+                       class="text-decoration-none">
+                        <div class="case-card h-100">
+                            <!-- Image or placeholder -->
+                            @{
+                                var primary = c.Images.FirstOrDefault(i => i.IsPrimary) ?? c.Images.FirstOrDefault();
+                            }
+                            @if (primary is not null)
+                            {
+                                <img src="@primary.ImagePath" alt="Case Image"
+                                     style="width:100%;height:160px;object-fit:cover;border-radius:8px;margin-bottom:1rem" />
+                            }
+                            else
+                            {
+                                <div style="width:100%;height:120px;background:rgba(14,165,233,.06);
+                                            border-radius:8px;margin-bottom:1rem;display:flex;
+                                            align-items:center;justify-content:center">
+                                    <i class="bi bi-tooth text-primary" style="font-size:2.5rem;opacity:.5"></i>
+                                </div>
+                            }
+
+                            <div class="case-type-badge">
+                                <span class="db-badge badge-status-open" style="font-size:.7rem">@c.TreatmentType</span>
+                            </div>
+
+                            <h6 class="fw-600 mb-2">@c.Title</h6>
+                            <p class="text-muted small mb-3" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">
+                                @c.Description
+                            </p>
+
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span class="db-badge @statusClass">@c.Status</span>
+                                <span class="text-muted small"><i class="bi bi-clock me-1"></i>@c.CreatedAt.ToString("dd MMM")</span>
+                            </div>
+
+                            @if (c.AssignedStudent is not null)
+                            {
+                                <div class="mt-2 pt-2 border-top d-flex align-items-center gap-2">
+                                    <div class="avatar-initials-xs">
+                                        @c.AssignedStudent.User.FirstName[0]@c.AssignedStudent.User.LastName[0]
+                                    </div>
+                                    <span class="small text-muted">@c.AssignedStudent.User.FullName</span>
+                                </div>
+                            }
+
+                            @if (c.Status == CaseStatus.Completed && c.Review is null)
+                            {
+                                <div class="mt-2">
+                                    <a asp-controller="Patient" asp-action="Review" asp-route-id="@c.Id"
+                                       class="btn btn-warning btn-sm w-100 fw-600"
+                                       onclick="event.stopPropagation()">
+                                        <i class="bi bi-star me-1"></i>Leave a Review
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    }
+</div>

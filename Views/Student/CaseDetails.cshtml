@@ -1,0 +1,109 @@
+@model DentBridge.Models.DentalCase
+@using DentBridge.Models.Enums
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<DentBridge.Models.ApplicationUser> UserManager
+@{ ViewData["Title"] = Model.Title; }
+
+<div class="page-header">
+    <div class="container">
+        <div class="d-flex align-items-center gap-3">
+            <a asp-controller="Student" asp-action="Dashboard" class="btn btn-ghost-icon"><i class="bi bi-arrow-left"></i></a>
+            <div>
+                <h1 class="mb-0">@Model.Title</h1>
+                <span class="db-badge badge-status-open ms-0">@Model.TreatmentType</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="db-card p-4 mb-4">
+                <h6 class="fw-600 mb-3">Case Description</h6>
+                <p>@Model.Description</p>
+                @if (!string.IsNullOrEmpty(Model.PatientNotes))
+                {
+                    <hr>
+                    <h6 class="fw-600 small text-muted">PATIENT NOTES</h6>
+                    <p class="text-muted small">@Model.PatientNotes</p>
+                }
+            </div>
+
+            @if (Model.Images.Any())
+            {
+                <div class="db-card p-4 mb-4">
+                    <h6 class="fw-600 mb-3"><i class="bi bi-images me-2"></i>Case Images</h6>
+                    <div class="row g-2">
+                        @foreach (var img in Model.Images)
+                        {
+                            <div class="col-4">
+                                <img src="@img.ImagePath" class="img-fluid rounded-db"
+                                     style="height:160px;width:100%;object-fit:cover" />
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (Model.Status == CaseStatus.InProgress)
+            {
+                var currentUserId = UserManager.GetUserId(User);
+                @if (Model.AssignedStudent?.UserId == currentUserId)
+                {
+                    <div class="db-card p-4">
+                        <h6 class="fw-600 mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Complete This Case</h6>
+                        <form asp-controller="Student" asp-action="CompleteCase" method="post" data-complete-form>
+                            <input type="hidden" name="id" value="@Model.Id" />
+                            <div class="mb-3">
+                                <label class="form-label">Completion Notes <span class="text-muted">(optional)</span></label>
+                                <textarea name="notes" class="form-control" rows="3"
+                                          placeholder="Describe what treatment was performed..."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success fw-600 px-4">
+                                <i class="bi bi-check2-all me-2"></i>Mark as Completed
+                            </button>
+                        </form>
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="col-lg-4">
+            <div class="db-card p-4 mb-4">
+                <h6 class="fw-600 mb-3">Patient Info</h6>
+                <div class="fw-600">@Model.Patient?.User?.FullName</div>
+                <div class="text-muted small">@Model.Patient?.User?.City</div>
+                <div class="text-muted small mt-1">
+                    <i class="bi bi-telephone me-1"></i>@Model.Patient?.User?.PhoneNumber
+                </div>
+            </div>
+
+            <div class="db-card p-4 mb-4">
+                <h6 class="fw-600 mb-3">Case Info</h6>
+                <table class="table table-sm table-borderless mb-0 small">
+                    <tr><td class="text-muted">Urgency</td><td class="fw-500">@(Model.UrgencyLevel ?? "Normal")</td></tr>
+                    @if (!string.IsNullOrEmpty(Model.Location))
+                    {
+                        <tr><td class="text-muted">Location</td><td class="fw-500">@Model.Location</td></tr>
+                    }
+                    @if (Model.AppointmentDate.HasValue)
+                    {
+                        <tr><td class="text-muted">Preferred Date</td><td class="fw-500">@Model.AppointmentDate.Value.ToString("dd MMM yyyy")</td></tr>
+                    }
+                    <tr><td class="text-muted">Posted</td><td class="fw-500">@Model.CreatedAt.ToString("dd MMM yyyy")</td></tr>
+                </table>
+            </div>
+
+            @if (Model.Status == CaseStatus.Open)
+            {
+                <form asp-controller="Student" asp-action="AcceptCase" asp-route-id="@Model.Id" method="post"
+                      data-accept-form>
+                    <button type="submit" class="btn btn-success w-100 fw-600 py-2">
+                        <i class="bi bi-check-circle me-2"></i>Accept This Case
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+</div>

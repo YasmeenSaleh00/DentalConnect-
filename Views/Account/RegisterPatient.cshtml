@@ -1,0 +1,80 @@
+@model DentBridge.ViewModels.Account.RegisterViewModel
+@{ ViewData["Title"] = "Register as Patient"; }
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="text-center mb-4">
+                <i class="bi bi-person-plus-fill text-primary" style="font-size:2.5rem"></i>
+                <h2 class="fw-700 mt-2 mb-1">Create Patient Account</h2>
+                <p class="text-muted">Get access to affordable dental care from verified students</p>
+            </div>
+
+            <div class="db-card p-4">
+                <form asp-action="RegisterPatient" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
+
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <label asp-for="FirstName" class="form-label">First Name</label>
+                            <input asp-for="FirstName" class="form-control" placeholder="Mohammed" />
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="LastName" class="form-label">Last Name</label>
+                            <input asp-for="LastName" class="form-control" placeholder="Al-Rashid" />
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Email" class="form-label">Email Address</label>
+                            <input asp-for="Email" class="form-control" placeholder="you@example.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="PhoneNumber" class="form-label">Phone Number</label>
+                            <input asp-for="PhoneNumber" class="form-control" placeholder="05xxxxxxxx" />
+                            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="City" class="form-label">City</label>
+                            <input asp-for="City" class="form-control" placeholder="Riyadh" />
+                            <span asp-validation-for="City" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="DateOfBirth" class="form-label">Date of Birth</label>
+                            <input asp-for="DateOfBirth" type="date" class="form-control" />
+                            <span asp-validation-for="DateOfBirth" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="Password" class="form-label">Password</label>
+                            <input asp-for="Password" class="form-control" placeholder="Min. 8 characters" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label asp-for="ConfirmPassword" class="form-label">Confirm Password</label>
+                            <input asp-for="ConfirmPassword" class="form-control" placeholder="Repeat password" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary w-100 py-2 fw-600">
+                            <i class="bi bi-check-circle me-2"></i>Create My Account
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <p class="text-center text-muted mt-3 small">
+                Already have an account?
+                <a asp-controller="Account" asp-action="Login" class="text-primary fw-600">Sign In</a>
+            </p>
+            <p class="text-center text-muted small">
+                Are you a dental student?
+                <a asp-controller="Account" asp-action="RegisterStudent" class="text-primary fw-600">Apply Here</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts { @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); } }

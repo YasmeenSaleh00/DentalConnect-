@@ -1,0 +1,74 @@
+@model IEnumerable<DentBridge.Models.DentalCase>
+@using DentBridge.Models.Enums
+@{ ViewData["Title"] = "My Cases"; }
+
+<div class="page-header">
+    <div class="container">
+        <h1><i class="bi bi-folder-check text-primary me-2"></i>My Cases</h1>
+    </div>
+</div>
+
+<div class="container pb-5">
+    @if (!Model.Any())
+    {
+        <div class="db-card">
+            <div class="empty-state">
+                <div class="empty-state-icon"><i class="bi bi-folder-plus"></i></div>
+                <h5 class="fw-600">No cases yet</h5>
+                <p class="text-muted">Browse available cases and accept one to get started.</p>
+                <a asp-controller="Student" asp-action="Dashboard" class="btn btn-primary px-4">Browse Cases</a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="db-card">
+            <div class="table-responsive">
+                <table class="table db-table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Case</th>
+                            <th>Patient</th>
+                            <th>Type</th>
+                            <th>Accepted</th>
+                            <th>Status</th>
+                            <th>Review</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var c in Model)
+                        {
+                            var sc = c.Status switch {
+                                CaseStatus.InProgress => "badge-status-inprogress",
+                                CaseStatus.Completed => "badge-status-completed",
+                                _ => "badge-status-open"
+                            };
+                            <tr>
+                                <td class="fw-500">@c.Title</td>
+                                <td class="text-muted small">@c.Patient?.User?.FullName</td>
+                                <td class="text-muted small">@c.TreatmentType</td>
+                                <td class="text-muted small">@c.AcceptedAt?.ToString("dd MMM")</td>
+                                <td><span class="db-badge @sc">@c.Status</span></td>
+                                <td>
+                                    @if (c.Review is not null)
+                                    {
+                                        <span class="stars small">@c.Review.Rating★</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted small">—</span>
+                                    }
+                                </td>
+                                <td>
+                                    <a asp-controller="Student" asp-action="CaseDetails" asp-route-id="@c.Id"
+                                       class="btn btn-sm btn-outline-primary px-2">View</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>

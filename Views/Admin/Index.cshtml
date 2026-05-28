@@ -1,0 +1,218 @@
+@model DentBridge.ViewModels.Case.AdminDashboardViewModel
+@{ ViewData["Title"] = "Admin Dashboard"; }
+
+<div class="page-header">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-between">
+            <div>
+                <h1 class="mb-1"><i class="bi bi-speedometer2 text-primary me-2"></i>Admin Dashboard</h1>
+                <p class="text-muted mb-0 small">Overview of the DentBridge platform</p>
+            </div>
+            <div class="text-muted small">
+                <i class="bi bi-clock me-1"></i>@DateTime.Now.ToString("dddd, dd MMMM yyyy")
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-icon blue"><i class="bi bi-people-fill"></i></div>
+                <div>
+                    <div class="stat-value">@Model.TotalPatients</div>
+                    <div class="stat-label">Total Patients</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-icon green"><i class="bi bi-mortarboard-fill"></i></div>
+                <div>
+                    <div class="stat-value">@Model.TotalStudents</div>
+                    <div class="stat-label">Registered Students</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-icon yellow"><i class="bi bi-person-check-fill"></i></div>
+                <div>
+                    <div class="stat-value">@Model.PendingStudents</div>
+                    <div class="stat-label">Pending Approvals</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="stat-card">
+                <div class="stat-icon cyan"><i class="bi bi-folder-fill"></i></div>
+                <div>
+                    <div class="stat-value">@Model.TotalCases</div>
+                    <div class="stat-label">Total Cases</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cases Breakdown -->
+    <div class="row g-3 mb-4">
+        <div class="col-4">
+            <div class="stat-card flex-column text-center gap-1 py-3">
+                <div class="stat-value text-success">@Model.OpenCases</div>
+                <div class="stat-label">Open Cases</div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="stat-card flex-column text-center gap-1 py-3">
+                <div class="stat-value text-primary">@Model.InProgressCases</div>
+                <div class="stat-label">In Progress</div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="stat-card flex-column text-center gap-1 py-3">
+                <div class="stat-value text-secondary">@Model.CompletedCases</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Pending Approvals -->
+        <div class="col-lg-5">
+            <div class="db-card">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <span><i class="bi bi-person-check text-warning me-2"></i>Pending Approvals</span>
+                    @if (Model.PendingStudents > 0)
+                    {
+                        <a asp-controller="Admin" asp-action="PendingStudents"
+                           class="btn btn-sm btn-warning px-3">
+                            View All (@Model.PendingStudents)
+                        </a>
+                    }
+                </div>
+                <div class="p-3">
+                    @if (!Model.PendingApprovals.Any())
+                    {
+                        <div class="empty-state py-3">
+                            <i class="bi bi-check-circle text-success fs-1 d-block mb-2"></i>
+                            <div class="text-muted small">All applications reviewed</div>
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var s in Model.PendingApprovals)
+                        {
+                            <div class="d-flex align-items-center gap-3 py-2 border-bottom">
+                                <div class="avatar-initials-xs" style="width:38px;height:38px;font-size:.9rem">
+                                    @s.User.FirstName[0]@s.User.LastName[0]
+                                </div>
+                                <div class="flex-grow-1 min-w-0">
+                                    <div class="fw-600 text-truncate">@s.User.FullName</div>
+                                    <div class="text-muted small text-truncate">@s.UniversityName</div>
+                                </div>
+                                <a asp-controller="Admin" asp-action="StudentDetails" asp-route-id="@s.Id"
+                                   class="btn btn-sm btn-outline-primary px-2">Review</a>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Cases -->
+        <div class="col-lg-7">
+            <div class="db-card">
+                <div class="card-header d-flex align-items-center justify-content-between">
+                    <span><i class="bi bi-folder2-open text-primary me-2"></i>Recent Cases</span>
+                    <a asp-controller="Admin" asp-action="AllCases" class="btn btn-sm btn-outline-primary px-3">
+                        View All
+                    </a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table db-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Case</th>
+                                <th>Patient</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in Model.RecentCases)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="fw-500 text-truncate" style="max-width:140px">@c.Title</div>
+                                        <small class="text-muted">@c.CreatedAt.ToString("MMM dd")</small>
+                                    </td>
+                                    <td class="text-muted small">@c.Patient?.User?.FullName</td>
+                                    <td>
+                                        <span class="db-badge badge-status-open" style="font-size:.7rem">
+                                            @c.TreatmentType.ToString()
+                                        </span>
+                                    </td>
+                                    <td>
+                                        @{
+                                            var sc = c.Status switch {
+                                                DentBridge.Models.Enums.CaseStatus.Open => "badge-status-open",
+                                                DentBridge.Models.Enums.CaseStatus.InProgress => "badge-status-inprogress",
+                                                DentBridge.Models.Enums.CaseStatus.Completed => "badge-status-completed",
+                                                _ => "badge-status-cancelled"
+                                            };
+                                        }
+                                        <span class="db-badge @sc">@c.Status</span>
+                                    </td>
+                                    <td>
+                                        <a asp-controller="Admin" asp-action="CaseDetails" asp-route-id="@c.Id"
+                                           class="btn btn-sm btn-ghost-icon" style="width:auto;height:auto;padding:.2rem .5rem">
+                                            <i class="bi bi-arrow-right"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                            @if (!Model.RecentCases.Any())
+                            {
+                                <tr><td colspan="5" class="text-center text-muted py-4">No cases yet</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Treatment Distribution -->
+        @if (Model.CasesByType.Any())
+        {
+            <div class="col-12">
+                <div class="db-card p-4">
+                    <h6 class="fw-600 mb-4"><i class="bi bi-bar-chart-fill text-primary me-2"></i>Cases by Treatment Type</h6>
+                    <div class="row g-3">
+                        @{
+                            int total = Model.CasesByType.Values.Sum();
+                        }
+                        @foreach (var kv in Model.CasesByType.OrderByDescending(x => x.Value))
+                        {
+                            int pct = total > 0 ? (int)Math.Round(kv.Value * 100.0 / total) : 0;
+                            <div class="col-md-6">
+                                <div class="d-flex justify-content-between small mb-1">
+                                    <span class="fw-500">@kv.Key</span>
+                                    <span class="text-muted">@kv.Value cases (@pct%)</span>
+                                </div>
+                                <div class="progress" style="height:8px;border-radius:99px">
+                                    <div class="progress-bar" style="width:@pct%;background:var(--db-primary);border-radius:99px"></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
