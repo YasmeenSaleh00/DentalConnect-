@@ -1,0 +1,183 @@
+@model DentBridge.ViewModels.Profile.EditPatientProfileViewModel
+@{ ViewData["Title"] = "Edit Profile"; }
+
+<div class="page-header">
+    <div class="container d-flex align-items-center justify-content-between">
+        <h1><i class="bi bi-pencil-square text-primary me-2"></i>Edit Profile</h1>
+        <a asp-action="Profile" class="btn btn-outline-primary btn-sm">
+            <i class="bi bi-arrow-left me-1"></i>Back to Profile
+        </a>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <form asp-action="EditProfile" method="post" enctype="multipart/form-data" novalidate>
+        @Html.AntiForgeryToken()
+
+        <div class="row g-4">
+
+            <div class="col-lg-4">
+                <div class="db-card p-4 text-center">
+                    <div class="mb-3">
+                        @if (!string.IsNullOrEmpty(Model.CurrentAvatarPath))
+                        {
+                            <img id="avatarPreview" src="@Model.CurrentAvatarPath"
+                                 class="rounded-circle border"
+                                 style="width:100px;height:100px;object-fit:cover;border-color:var(--db-border)!important"
+                                 alt="Current avatar" />
+                        }
+                        else
+                        {
+                            <div id="avatarPreview"
+                                 class="avatar-initials-xs mx-auto"
+                                 style="width:100px;height:100px;font-size:2.5rem">
+                                @Model.FirstName.FirstOrDefault()@Model.LastName.FirstOrDefault()
+                            </div>
+                        }
+                    </div>
+                    <label class="btn btn-outline-primary btn-sm" for="avatarInput">
+                        <i class="bi bi-camera me-1"></i>Change Photo
+                    </label>
+                    <input type="file" id="avatarInput" name="Avatar" accept="image/*" class="d-none" />
+                    <span asp-validation-for="Avatar" class="d-block text-danger small mt-1"></span>
+                    <p class="text-muted small mt-2 mb-0">JPG, PNG or WebP · max 5 MB</p>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+
+                <div class="db-card p-4 mb-4">
+                    <h6 class="fw-600 mb-4">
+                        <i class="bi bi-person text-primary me-1"></i>Personal Information
+                    </h6>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label asp-for="FirstName" class="form-label"></label>
+                            <input asp-for="FirstName" class="form-control" placeholder="First name" />
+                            <span asp-validation-for="FirstName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="LastName" class="form-label"></label>
+                            <input asp-for="LastName" class="form-control" placeholder="Last name" />
+                            <span asp-validation-for="LastName" class="text-danger small"></span>
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="PhoneNumber" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                <input asp-for="PhoneNumber" class="form-control" placeholder="+1 234 567 8900" />
+                            </div>
+                            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="PhoneNumber2" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                <input asp-for="PhoneNumber2" class="form-control" placeholder="Optional" />
+                            </div>
+                            <span asp-validation-for="PhoneNumber2" class="text-danger small"></span>
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="City" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                                <input asp-for="City" class="form-control" placeholder="City" />
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="DateOfBirth" class="form-label"></label>
+                            <input asp-for="DateOfBirth" type="date" class="form-control"
+                                   value="@(Model.DateOfBirth?.ToString("yyyy-MM-dd"))" />
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Address" class="form-label"></label>
+                            <input asp-for="Address" class="form-control" placeholder="Street address" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="db-card p-4 mb-4">
+                    <h6 class="fw-600 mb-4">
+                        <i class="bi bi-heart-pulse text-primary me-1"></i>Medical Information
+                    </h6>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label asp-for="BloodType" class="form-label"></label>
+                            <select asp-for="BloodType" class="form-select">
+                                <option value="">— Select blood type —</option>
+                                @foreach (var bt in new[] { "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-" })
+                                {
+                                    <option value="@bt" selected="@(Model.BloodType == bt ? "selected" : null)">@bt</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="InsuranceProvider" class="form-label"></label>
+                            <input asp-for="InsuranceProvider" class="form-control" placeholder="e.g. Aetna, Blue Cross" />
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Allergies" class="form-label"></label>
+                            <input asp-for="Allergies" class="form-control"
+                                   placeholder="e.g. Penicillin, Latex, Ibuprofen (or None)" />
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="MedicalHistory" class="form-label"></label>
+                            <textarea asp-for="MedicalHistory" class="form-control" rows="4"
+                                      placeholder="List any relevant conditions, previous surgeries, or ongoing treatments..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="db-card p-4 mb-4">
+                    <h6 class="fw-600 mb-4">
+                        <i class="bi bi-exclamation-triangle text-primary me-1"></i>Emergency Contact
+                    </h6>
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label asp-for="EmergencyContactName" class="form-label"></label>
+                            <input asp-for="EmergencyContactName" class="form-control" placeholder="Full name" />
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="EmergencyContactPhone" class="form-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-telephone"></i></span>
+                                <input asp-for="EmergencyContactPhone" class="form-control" placeholder="+1 234 567 8900" />
+                            </div>
+                            <span asp-validation-for="EmergencyContactPhone" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a asp-action="Profile" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-4">
+                        <i class="bi bi-check2 me-1"></i>Save Changes
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    document.getElementById('avatarInput').addEventListener('change', function () {
+        var file = this.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            var preview = document.getElementById('avatarPreview');
+            var img = document.createElement('img');
+            img.id = 'avatarPreview';
+            img.src = e.target.result;
+            img.className = 'rounded-circle border';
+            img.style.cssText = 'width:100px;height:100px;object-fit:cover;border-color:var(--db-border)!important';
+            img.alt = 'Avatar preview';
+            preview.replaceWith(img);
+        };
+        reader.readAsDataURL(file);
+    });
+}());
+</script>
+}

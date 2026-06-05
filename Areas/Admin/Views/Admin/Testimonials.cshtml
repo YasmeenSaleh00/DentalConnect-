@@ -53,18 +53,18 @@
             </div>
         }
 
-        <!-- Filtered list -->
-        @if (Model.Filter != null || !Model.Filter.HasValue)
-        {
-            <div class="row g-4">
-                @foreach (var t in Model.Filtered)
+        <!-- Filtered list (when All tab: skip pending since they are shown above) -->
+        <div class="row g-4">
+            @foreach (var t in Model.Filtered)
+            {
+                @if (Model.Filter != null || t.Status != TestimonialStatus.Pending)
                 {
                     <div class="col-lg-6">
                         @await Html.PartialAsync("_TestimonialCard", t)
                     </div>
                 }
-            </div>
-        }
+            }
+        </div>
     }
 </div>
 

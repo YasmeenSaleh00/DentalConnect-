@@ -19,17 +19,13 @@ public class AdminController : Controller
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEmailService _emailService;
 
-    public AdminController(
-        ApplicationDbContext context,
-        UserManager<ApplicationUser> userManager,
-        IEmailService emailService)
+    public AdminController(ApplicationDbContext context,UserManager<ApplicationUser> userManager,IEmailService emailService)
     {
         _context = context;
         _userManager = userManager;
         _emailService = emailService;
     }
 
-    // ─── Dashboard ───────────────────────────────────────────────────────────
 
     public async Task<IActionResult> Index()
     {
@@ -74,7 +70,6 @@ public class AdminController : Controller
         });
     }
 
-    // ─── Students ────────────────────────────────────────────────────────────
 
     public async Task<IActionResult> PendingStudents()
     {
@@ -162,7 +157,6 @@ public class AdminController : Controller
         return RedirectToAction(nameof(PendingStudents));
     }
 
-    // ─── Cases ───────────────────────────────────────────────────────────────
 
     public async Task<IActionResult> AllCases(CaseStatus? status = null)
     {
@@ -244,7 +238,6 @@ public class AdminController : Controller
         return RedirectToAction(nameof(CaseDetails), new { id });
     }
 
-    // ─── Notifications ───────────────────────────────────────────────────────
 
     public async Task<IActionResult> Notifications()
     {
@@ -262,7 +255,6 @@ public class AdminController : Controller
         return View(notifications);
     }
 
-    // ─── Users ───────────────────────────────────────────────────────────────
 
     public async Task<IActionResult> AllUsers()
     {
@@ -285,16 +277,22 @@ public class AdminController : Controller
         if (user is null) return NotFound();
 
         user.IsActive = !user.IsActive;
+        await _userManager.UpdateAsync(user);
         if (!user.IsActive)
             await _userManager.UpdateSecurityStampAsync(user);
-        else
-            await _userManager.UpdateAsync(user);
+
+        if (user.Email is not null)
+        {
+            if (user.IsActive)
+                await _emailService.SendAccountActivatedAsync(user.Email, user.FullName);
+            else
+                await _emailService.SendAccountDeactivatedAsync(user.Email, user.FullName);
+        }
 
         TempData["Success"] = user.IsActive ? "User activated successfully." : "User deactivated successfully.";
         return RedirectToAction(nameof(AllUsers));
     }
 
-    // ─── Testimonials ─────────────────────────────────────────────────────────
 
     public async Task<IActionResult> Testimonials(TestimonialStatus? filter = null)
     {

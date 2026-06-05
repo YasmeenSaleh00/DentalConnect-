@@ -23,7 +23,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         base.OnModelCreating(builder);
 
-        // SQL Server requires bounded key columns — cap Identity nvarchar(max) defaults
         builder.Entity<ApplicationUser>(e =>
         {
             e.Property(u => u.Id).HasMaxLength(128);

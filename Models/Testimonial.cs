@@ -11,11 +11,11 @@ public class Testimonial
 
     public string Name { get; set; } = string.Empty;
 
-    public string Role { get; set; } = string.Empty; // "Patient" or "Student"
+    public string Role { get; set; } = string.Empty; 
 
     public string? AvatarPath { get; set; }
 
-    public int Rating { get; set; } // 1–5
+    public int Rating { get; set; } 
 
     public string Message { get; set; } = string.Empty;
 

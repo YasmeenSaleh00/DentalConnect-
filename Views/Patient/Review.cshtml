@@ -20,7 +20,6 @@
                     <input type="hidden" asp-for="StudentName" />
                     <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small"></div>
 
-                    <!-- Star Rating -->
                     <div class="mb-4 text-center">
                         <label class="form-label d-block mb-3">Overall Rating</label>
                         <div class="star-rating-input justify-content-center">
@@ -33,7 +32,6 @@
                         <span asp-validation-for="Rating" class="text-danger small d-block mt-2"></span>
                     </div>
 
-                    <!-- Checkboxes -->
                     <div class="mb-4">
                         <label class="form-label fw-600">Quick Assessment</label>
                         <div class="row g-2">
@@ -64,7 +62,6 @@
                         </div>
                     </div>
 
-                    <!-- Comment -->
                     <div class="mb-4">
                         <label asp-for="Comment" class="form-label">Comments <span class="text-muted">(optional)</span></label>
                         <textarea asp-for="Comment" class="form-control" rows="4"

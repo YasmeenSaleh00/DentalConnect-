@@ -49,6 +49,13 @@ public class AccountController : Controller
         if (result.Succeeded)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user is not null && !user.IsActive)
+            {
+                await _signInManager.SignOutAsync();
+                ModelState.AddModelError("", "Your account has been deactivated. Please contact the administrator.");
+                return View(model);
+            }
+
             if (user is not null)
             {
                 user.LastLoginAt = DateTime.UtcNow;

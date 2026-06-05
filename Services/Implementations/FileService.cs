@@ -7,8 +7,8 @@ public class FileService : IFileService
     private readonly IWebHostEnvironment _env;
     private static readonly string[] _allowedImages = [".jpg", ".jpeg", ".png", ".webp"];
     private static readonly string[] _allowedDocs = [".pdf", ".jpg", ".jpeg", ".png"];
-    private const long MaxImageSize = 5 * 1024 * 1024;  // 5 MB
-    private const long MaxDocSize = 10 * 1024 * 1024;   // 10 MB
+    private const long MaxImageSize = 5 * 1024 * 1024; 
+    private const long MaxDocSize = 10 * 1024 * 1024;   
 
     public FileService(IWebHostEnvironment env) => _env = env;
 

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <!-- Background gradient: deep sky-blue top-left → navy bottom-right -->
+    <linearGradient id="bgGrad" x1="15%" y1="0%" x2="85%" y2="100%">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#075985"/>
+    </linearGradient>
+
+    <!-- Tooth gradient: crisp white top → cool light-blue bottom -->
+    <linearGradient id="toothGrad" x1="15%" y1="0%" x2="85%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e0f2fe"/>
+    </linearGradient>
+
+    <!-- Root gradient: slightly translucent, same as tooth but dimmer -->
+    <linearGradient id="rootGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.88)"/>
+      <stop offset="100%" stop-color="rgba(186,230,253,0.72)"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ── Background ── -->
+  <circle cx="100" cy="100" r="96" fill="url(#bgGrad)"/>
+  <!-- Subtle inner ring for depth -->
+  <circle cx="100" cy="100" r="92" fill="none"
+          stroke="rgba(255,255,255,0.10)" stroke-width="1.5"/>
+
+  <!-- ── Bridge arc (the "Bridge" in DentBridge — arches over the tooth) ── -->
+  <!-- Arc peaks at y≈61, just above the cusp tips at y=59 -->
+  <path d="M46,112 C46,44 154,44 154,112"
+        fill="none"
+        stroke="rgba(255,255,255,0.28)"
+        stroke-width="3"
+        stroke-linecap="round"/>
+
+  <!-- ── Tooth crown (premolar / bicuspid) ── -->
+  <!-- 2 symmetric cusps, gentle cervical constriction, natural CEJ base curve -->
+  <path d="
+    M 78,132
+    C 70,124 70,90  76,76
+    C 79,67  84,57  90,59
+    C 94,61  97,70  100,70
+    C 103,70 106,61 110,59
+    C 116,57 121,67 124,76
+    C 130,90 130,124 122,132
+    C 114,140 86,140 78,132
+    Z" fill="url(#toothGrad)"/>
+
+  <!-- Crown gloss highlight (light from top-left) -->
+  <ellipse cx="90" cy="83" rx="8" ry="15"
+           fill="rgba(255,255,255,0.22)"
+           transform="rotate(-12,90,83)"/>
+
+  <!-- ── Roots ── -->
+  <!-- Left root — tapers from crown base to rounded tip -->
+  <path d="
+    M 80,140
+    C 77,156 77,168 80,178
+    Q 85,186 90,178
+    C 93,168 93,156 90,140
+    Z" fill="url(#rootGrad)"/>
+
+  <!-- Right root — mirror of left -->
+  <path d="
+    M 110,140
+    C 107,156 107,168 110,178
+    Q 115,186 120,178
+    C 123,168 123,156 120,140
+    Z" fill="url(#rootGrad)"/>
+
+</svg>

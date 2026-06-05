@@ -7,6 +7,7 @@ using DentBridge.Models;
 using DentBridge.Models.Enums;
 using DentBridge.Services.Interfaces;
 using DentBridge.ViewModels.Case;
+using DentBridge.ViewModels.Profile;
 using DentBridge.ViewModels.Testimonial;
 
 namespace DentBridge.Controllers;
@@ -228,7 +229,100 @@ public class PatientController : Controller
         return View(notifications);
     }
 
-    // ─── Testimonial ─────────────────────────────────────────────────────────
+
+    public async Task<IActionResult> Profile()
+    {
+        var userId = _userManager.GetUserId(User)!;
+        var patient = await _context.PatientProfiles
+            .Include(p => p.User)
+            .Include(p => p.Cases)
+            .FirstOrDefaultAsync(p => p.UserId == userId);
+
+        if (patient is null) return NotFound();
+        return View(patient);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditProfile()
+    {
+        var userId = _userManager.GetUserId(User)!;
+        var patient = await _context.PatientProfiles
+            .Include(p => p.User)
+            .FirstOrDefaultAsync(p => p.UserId == userId);
+
+        if (patient is null) return NotFound();
+
+        return View(new EditPatientProfileViewModel
+        {
+            FirstName              = patient.User.FirstName,
+            LastName               = patient.User.LastName,
+            PhoneNumber            = patient.User.PhoneNumber,
+            PhoneNumber2           = patient.User.PhoneNumber2,
+            Address                = patient.User.Address,
+            City                   = patient.User.City,
+            DateOfBirth            = patient.User.DateOfBirth == default ? null : patient.User.DateOfBirth,
+            MedicalHistory         = patient.MedicalHistory,
+            Allergies              = patient.Allergies,
+            EmergencyContactName   = patient.EmergencyContactName,
+            EmergencyContactPhone  = patient.EmergencyContactPhone,
+            InsuranceProvider      = patient.InsuranceProvider,
+            BloodType              = patient.BloodType,
+            CurrentAvatarPath      = patient.User.AvatarPath,
+        });
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditProfile(EditPatientProfileViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+
+        var userId = _userManager.GetUserId(User)!;
+        var patient = await _context.PatientProfiles
+            .Include(p => p.User)
+            .FirstOrDefaultAsync(p => p.UserId == userId);
+
+        if (patient is null) return NotFound();
+
+        var user = patient.User;
+
+        if (model.Avatar is not null)
+        {
+            if (!_fileService.IsValidImage(model.Avatar))
+            {
+                ModelState.AddModelError(nameof(model.Avatar), "Please upload a valid image (JPG, PNG, WebP, max 5 MB).");
+                model.CurrentAvatarPath = user.AvatarPath;
+                return View(model);
+            }
+
+            if (!string.IsNullOrEmpty(user.AvatarPath))
+                _fileService.DeleteFile(user.AvatarPath);
+
+            user.AvatarPath = await _fileService.SaveAvatarAsync(model.Avatar, userId);
+        }
+
+        user.FirstName    = model.FirstName;
+        user.LastName     = model.LastName;
+        user.PhoneNumber  = model.PhoneNumber;
+        user.PhoneNumber2 = model.PhoneNumber2;
+        user.Address      = model.Address;
+        user.City         = model.City;
+        if (model.DateOfBirth.HasValue)
+            user.DateOfBirth = model.DateOfBirth.Value;
+
+        patient.MedicalHistory        = model.MedicalHistory;
+        patient.Allergies             = model.Allergies;
+        patient.EmergencyContactName  = model.EmergencyContactName;
+        patient.EmergencyContactPhone = model.EmergencyContactPhone;
+        patient.InsuranceProvider     = model.InsuranceProvider;
+        patient.BloodType             = model.BloodType;
+
+        await _userManager.UpdateAsync(user);
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Profile updated successfully!";
+        return RedirectToAction(nameof(Profile));
+    }
+
 
     [HttpGet]
     public async Task<IActionResult> SubmitTestimonial()

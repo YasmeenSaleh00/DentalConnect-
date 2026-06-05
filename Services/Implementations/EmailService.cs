@@ -87,6 +87,52 @@ public class EmailService : IEmailService
             "<p>Welcome to <strong>DentBridge</strong> — connecting dental students with patients who need affordable care.</p>" +
             "<p>Your account is ready. Log in to get started!</p>");
 
+    public Task SendAccountActivatedAsync(string to, string name) =>
+        SendAsync(to, "Your DentBridge Account Has Been Activated",
+            $"<p>Dear <strong>{name}</strong>,</p>" +
+            "<p>Your account has been <strong style='color:#10b981'>reactivated</strong> by an administrator.</p>" +
+            "<p>You can now log in and continue using DentBridge.</p>");
+
+    public Task SendAccountDeactivatedAsync(string to, string name) =>
+        SendAsync(to, "Your DentBridge Account Has Been Deactivated",
+            $"<p>Dear <strong>{name}</strong>,</p>" +
+            "<p>Your account has been <strong style='color:#ef4444'>deactivated</strong> by an administrator.</p>" +
+            "<p>You will not be able to log in until your account is reactivated. If you believe this is a mistake, please contact support.</p>");
+
+    public async Task SendContactMessageAsync(string senderName, string senderEmail, string subject, string message)
+    {
+        try
+        {
+            var mimeMessage = new MimeMessage();
+            mimeMessage.From.Add(new MailboxAddress(_settings.FromName, _settings.FromEmail));
+            mimeMessage.To.Add(MailboxAddress.Parse(_settings.FromEmail));
+            mimeMessage.ReplyTo.Add(new MailboxAddress(senderName, senderEmail));
+            mimeMessage.Subject = $"[Contact Form] {subject}";
+
+            var html = $"""
+                <p><strong>From:</strong> {senderName} (<a href="mailto:{senderEmail}">{senderEmail}</a>)</p>
+                <p><strong>Subject:</strong> {subject}</p>
+                <hr style="border:none;border-top:1px solid #e5e7eb;margin:16px 0">
+                <p style="white-space:pre-line">{System.Net.WebUtility.HtmlEncode(message)}</p>
+                """;
+
+            var bodyBuilder = new BodyBuilder { HtmlBody = WrapInTemplate($"Contact Form Message: {subject}", html) };
+            mimeMessage.Body = bodyBuilder.ToMessageBody();
+
+            using var client = new SmtpClient();
+            await client.ConnectAsync(_settings.Host, _settings.Port,
+                _settings.EnableSsl ? MailKit.Security.SecureSocketOptions.Auto
+                                    : MailKit.Security.SecureSocketOptions.None);
+            await client.AuthenticateAsync(_settings.Username, _settings.Password);
+            await client.SendAsync(mimeMessage);
+            await client.DisconnectAsync(true);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send contact form email from {Sender}: [{Type}] {Message}", senderEmail, ex.GetType().Name, ex.Message);
+        }
+    }
+
     private static string WrapInTemplate(string title, string body) => $"""
         <!DOCTYPE html>
         <html>

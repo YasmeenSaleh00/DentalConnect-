@@ -9,36 +9,123 @@
     </div>
 </div>
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="db-card p-5">
-                <h3 class="fw-700 mb-4">Our Mission</h3>
-                <p class="text-muted">
-                    DentBridge was founded with a simple but powerful idea: 5th-year dental students have the
-                    skills, supervision, and time to provide quality dental care — and many patients need
-                    affordable access to exactly that care.
-                </p>
-                <p class="text-muted">
-                    We built a platform that connects these two groups seamlessly, creating a win-win for
-                    dental education and public health.
-                </p>
-
-                <div class="row g-4 mt-3">
-                    @foreach (var val in new[] {
-                        ("bi-shield-check", "Safe & Supervised", "All treatments occur under certified dental faculty supervision."),
-                        ("bi-people-fill", "Community First", "We prioritize access to care for underserved communities."),
-                        ("bi-mortarboard", "Education Focused", "Helping students build real-world clinical experience."),
-                    })
-                    {
-                        <div class="col-md-4 text-center">
-                            <div class="step-circle" style="width:50px;height:50px;font-size:1.2rem"><i class="bi @val.Item1"></i></div>
-                            <h6 class="fw-600 mt-2">@val.Item2</h6>
-                            <p class="text-muted small">@val.Item3</p>
-                        </div>
-                    }
+<div class="db-mission-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="text-center mb-4 db-scroll-reveal">
+                    <span class="section-tag">Our Mission</span>
+                    <h2 class="fw-700 mt-2 mb-0" style="font-size:clamp(1.5rem,3vw,2rem)">Why We Exist</h2>
+                </div>
+                <div class="db-card db-mission-card p-4 p-lg-5 db-scroll-reveal" style="transition-delay:.12s">
+                    <p class="text-muted">
+                        DentBridge was founded with a simple but powerful idea: 5th-year dental students have the skills, supervision, and time to provide quality dental care — and many patients need affordable access to exactly that care.
+                    </p>
+                    <p class="text-muted mb-4">
+                        We built a platform that connects these two groups seamlessly, creating a win-win for dental education and public health.
+                    </p>
+                    <div class="row g-4">
+                        @foreach (var val in new[] {
+                            ("bi-shield-check", "Safe & Supervised", "All treatments occur under certified dental faculty supervision."),
+                            ("bi-people-fill", "Community First", "We prioritize access to care for underserved communities."),
+                            ("bi-mortarboard", "Education Focused", "Helping students build real-world clinical experience."),
+                        })
+                        {
+                            <div class="col-md-4 text-center">
+                                <div class="step-circle"><i class="bi @val.Item1"></i></div>
+                                <h6 class="fw-600 mt-2">@val.Item2</h6>
+                                <p class="text-muted small mb-0">@val.Item3</p>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<div class="db-vision-section py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="text-center mb-4 db-scroll-reveal">
+                    <span class="section-tag">Our Vision</span>
+                    <h2 class="fw-700 mt-2 mb-0" style="font-size:clamp(1.5rem,3vw,2rem)">Where We're Headed</h2>
+                </div>
+                <div class="db-card db-vision-card p-4 p-lg-5 db-scroll-reveal" style="transition-delay:.12s">
+                    <div class="row align-items-center g-4">
+                        <div class="col-md-auto text-center">
+                            <div class="db-vision-icon mx-auto">
+                                <i class="bi bi-eye-fill"></i>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <p class="db-vision-quote mb-0">
+                                "To become the leading academic dental platform that bridges the gap between dental education and community healthcare, empowering future dentists while improving access to quality dental treatment through supervised clinical experiences."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="db-values-section py-5">
+    <div class="container">
+        <div class="text-center mb-5 db-scroll-reveal">
+            <span class="section-tag">Our Core Values</span>
+            <h2 class="fw-700 mt-2 mb-2" style="font-size:clamp(1.5rem,3vw,2rem)">What Guides Us</h2>
+            <p class="text-muted mx-auto mb-0" style="max-width:560px">
+                The principles that shape every decision and interaction within the DentBridge platform.
+            </p>
+        </div>
+        <div class="row g-4">
+            @{
+                var coreValues = new[] {
+                    ("bi-mortarboard-fill",  "blue",   "Education Excellence",   "Supporting hands-on learning opportunities that help students develop their professional and clinical skills."),
+                    ("bi-heart-pulse-fill",  "red",    "Patient Care", "Prioritizing patient safety, comfort, and satisfaction throughout every stage of the treatment journey."),
+                    ("bi-universal-access",  "green",  "Accessibility", "Making dental care more affordable and accessible to the wider community."),
+                    ("bi-shield-check-fill", "cyan",   "Trust & Transparency",       "Building confidence through clear communication, ethical practices, and accountability."),
+                    ("bi-lightbulb-fill",    "yellow", "Innovation",  "Leveraging technology to create efficient connections between patients and dental students."),
+                    ("bi-person-check-fill", "purple", "Academic Supervision", "Ensuring all clinical interactions occur within a structured educational environment under appropriate academic guidance and supervision."),
+                };
+            }
+            @for (int i = 0; i < coreValues.Length; i++)
+            {
+                var v = coreValues[i];
+                <div class="col-md-6 col-lg-4 db-scroll-reveal" style="transition-delay:@(i * 100)ms">
+                    <div class="db-card db-card-hover db-value-card p-4 h-100">
+                        <div class="stat-icon @v.Item2 mb-3">
+                            <i class="bi @v.Item1"></i>
+                        </div>
+                        <h5 class="fw-700 mb-2">@v.Item3</h5>
+                        <p class="text-muted small mb-0">@v.Item4</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    var els = document.querySelectorAll('.db-scroll-reveal');
+    if (!els.length) return;
+    if (!('IntersectionObserver' in window)) {
+        els.forEach(function (el) { el.classList.add('db-revealed'); });
+        return;
+    }
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('db-revealed');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12 });
+    els.forEach(function (el) { observer.observe(el); });
+}());
+</script>
+}

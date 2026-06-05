@@ -8,7 +8,6 @@ using DentBridge.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ─── Database ──────────────────────────────────────────────────────────────
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -18,7 +17,6 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-// ─── Identity ──────────────────────────────────────────────────────────────
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
@@ -32,7 +30,11 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// ─── Auth Cookie ───────────────────────────────────────────────────────────
+builder.Services.Configure<SecurityStampValidatorOptions>(options =>
+{
+    options.ValidationInterval = TimeSpan.FromMinutes(1);
+});
+
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Account/Login";
@@ -42,21 +44,17 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.ExpireTimeSpan = TimeSpan.FromDays(7);
 });
 
-// ─── MVC ───────────────────────────────────────────────────────────────────
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-// ─── Helpers (file I/O + email — infrastructure only, no business logic) ───
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
-// ─── Session (flash messages) ──────────────────────────────────────────────
 builder.Services.AddSession(o => o.IdleTimeout = TimeSpan.FromMinutes(30));
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
-// ─── Seed Database ─────────────────────────────────────────────────────────
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -64,7 +62,6 @@ using (var scope = app.Services.CreateScope())
     await SeedData.InitializeAsync(scope.ServiceProvider);
 }
 
-// ─── Middleware Pipeline ───────────────────────────────────────────────────
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -79,11 +76,11 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+
 app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Admin Area route — maps /Admin/[action] to Areas/Admin/AdminController
 app.MapControllerRoute(
     name: "admin-area",
     pattern: "Admin/{action=Index}/{id?}",

@@ -25,7 +25,7 @@
                         <i class="bi bi-mortarboard-fill" style="font-size:2rem;color:var(--db-primary)"></i>
                     </div>
                     <h4 class="fw-700">How was your DentBridge experience?</h4>
-                    <p class="text-muted small">Your testimonial will be reviewed before it's published on our home page.</p>
+                    <p class="text-muted small">Your testimonial will be reviewed by our team before appearing on the public site.</p>
                 </div>
 
                 <form asp-action="SubmitTestimonial" method="post" id="testimonialForm">
@@ -37,7 +37,6 @@
                         <span asp-validation-for="Name" class="text-danger small"></span>
                     </div>
 
-                    <!-- Star Rating -->
                     <div class="mb-4">
                         <label class="form-label d-block">Your Rating <span class="text-danger">*</span></label>
                         <div class="star-rating-input" id="starRating">

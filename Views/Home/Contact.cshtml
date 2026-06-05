@@ -1,0 +1,101 @@
+@model DentBridge.ViewModels.ContactViewModel
+@{ ViewData["Title"] = "Contact Us"; }
+
+<div class="db-hero" style="padding:4rem 0">
+    <div class="container db-hero-content text-center">
+        <h1>Contact Us</h1>
+        <p class="lead" style="color:rgba(255,255,255,.75);max-width:600px;margin:0 auto">
+            Have a question or feedback? We'd love to hear from you.
+        </p>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row justify-content-center g-4">
+
+        <!-- Contact Info -->
+        <div class="col-lg-4">
+            <div class="db-card contact-info-card p-4 h-100">
+                <h5 class="fw-700 mb-4">Get in Touch</h5>
+
+                <div class="contact-item">
+                    <div class="ci-icon">
+                        <i class="bi bi-envelope-fill"></i>
+                    </div>
+                    <div>
+                        <div class="ci-label">Email</div>
+                        <a href="mailto:yasmeensaleh147@gmail.com" class="ci-value text-decoration-none">
+                            support@dentbridge.com
+                        </a>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="ci-icon">
+                        <i class="bi bi-clock-fill"></i>
+                    </div>
+                    <div>
+                        <div class="ci-label">Response Time</div>
+                        <p class="ci-value mb-0">We typically reply within 24 hours.</p>
+                    </div>
+                </div>
+
+                <div class="contact-item">
+                    <div class="ci-icon">
+                        <i class="bi bi-question-circle-fill"></i>
+                    </div>
+                    <div>
+                        <div class="ci-label">Need Help?</div>
+                        <p class="ci-value mb-0">Check our <a asp-controller="Home" asp-action="HowItWorks" class="text-decoration-none" style="color:var(--db-primary)">How It Works</a> page for common questions.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Contact Form -->
+        <div class="col-lg-6">
+            <div class="db-card p-4 p-md-5">
+                <h5 class="fw-700 mb-4">Send a Message</h5>
+
+                <form asp-action="Contact" method="post" novalidate>
+                    @Html.AntiForgeryToken()
+
+                    <div class="row g-3">
+                        <div class="col-sm-6">
+                            <label asp-for="Name" class="form-label fw-500">Your Name</label>
+                            <input asp-for="Name" class="form-control" placeholder="John Doe" />
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="Email" class="form-label fw-500">Your Email</label>
+                            <input asp-for="Email" class="form-control" placeholder="you@example.com" />
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Subject" class="form-label fw-500">Subject</label>
+                            <input asp-for="Subject" class="form-control" placeholder="How can we help?" />
+                            <span asp-validation-for="Subject" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <label asp-for="Message" class="form-label fw-500">Message</label>
+                            <textarea asp-for="Message" class="form-control" rows="6"
+                                      placeholder="Write your message here..."></textarea>
+                            <span asp-validation-for="Message" class="text-danger small"></span>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary px-4">
+                                <i class="bi bi-send me-2"></i>Send Message
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

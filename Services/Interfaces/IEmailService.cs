@@ -8,4 +8,7 @@ public interface IEmailService
     Task SendCaseAcceptedAsync(string to, string patientName, string caseTitle, string studentName);
     Task SendCaseCompletedAsync(string to, string patientName, string caseTitle);
     Task SendWelcomeEmailAsync(string to, string name);
+    Task SendAccountActivatedAsync(string to, string name);
+    Task SendAccountDeactivatedAsync(string to, string name);
+    Task SendContactMessageAsync(string senderName, string senderEmail, string subject, string message);
 }

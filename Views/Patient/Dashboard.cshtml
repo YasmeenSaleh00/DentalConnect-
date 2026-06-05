@@ -94,7 +94,6 @@
                     <a asp-controller="Patient" asp-action="CaseDetails" asp-route-id="@c.Id"
                        class="text-decoration-none">
                         <div class="case-card h-100">
-                            <!-- Image or placeholder -->
                             @{
                                 var primary = c.Images.FirstOrDefault(i => i.IsPrimary) ?? c.Images.FirstOrDefault();
                             }

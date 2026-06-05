@@ -7,6 +7,7 @@ using DentBridge.Models;
 using DentBridge.Models.Enums;
 using DentBridge.Services.Interfaces;
 using DentBridge.ViewModels.Case;
+using DentBridge.ViewModels.Profile;
 using DentBridge.ViewModels.Testimonial;
 
 namespace DentBridge.Controllers;
@@ -17,15 +18,18 @@ public class StudentController : Controller
     private readonly ApplicationDbContext _context;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly IEmailService _emailService;
+    private readonly IFileService _fileService;
 
     public StudentController(
         ApplicationDbContext context,
         UserManager<ApplicationUser> userManager,
-        IEmailService emailService)
+        IEmailService emailService,
+        IFileService fileService)
     {
         _context = context;
         _userManager = userManager;
         _emailService = emailService;
+        _fileService = fileService;
     }
 
     public async Task<IActionResult> Dashboard(TreatmentType? type = null, string? search = null)
@@ -225,6 +229,83 @@ public class StudentController : Controller
 
         if (student is null) return NotFound();
         return View(student);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditProfile()
+    {
+        var userId = _userManager.GetUserId(User)!;
+        var student = await _context.StudentProfiles
+            .Include(s => s.User)
+            .FirstOrDefaultAsync(s => s.UserId == userId);
+
+        if (student is null) return NotFound();
+
+        return View(new EditStudentProfileViewModel
+        {
+            FirstName          = student.User.FirstName,
+            LastName           = student.User.LastName,
+            PhoneNumber        = student.User.PhoneNumber,
+            PhoneNumber2       = student.User.PhoneNumber2,
+            Address            = student.User.Address,
+            City               = student.User.City,
+            DateOfBirth        = student.User.DateOfBirth == default ? null : student.User.DateOfBirth,
+            Bio                = student.Bio,
+            CurrentAvatarPath  = student.User.AvatarPath,
+            UniversityName     = student.UniversityName,
+            StudentId          = student.StudentId,
+            Specialization     = student.Specialization,
+        });
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditProfile(EditStudentProfileViewModel model)
+    {
+        if (!ModelState.IsValid) return View(model);
+
+        var userId = _userManager.GetUserId(User)!;
+        var student = await _context.StudentProfiles
+            .Include(s => s.User)
+            .FirstOrDefaultAsync(s => s.UserId == userId);
+
+        if (student is null) return NotFound();
+
+        var user = student.User;
+
+        if (model.Avatar is not null)
+        {
+            if (!_fileService.IsValidImage(model.Avatar))
+            {
+                ModelState.AddModelError(nameof(model.Avatar), "Please upload a valid image (JPG, PNG, WebP, max 5 MB).");
+                model.CurrentAvatarPath  = user.AvatarPath;
+                model.UniversityName     = student.UniversityName;
+                model.StudentId          = student.StudentId;
+                model.Specialization     = student.Specialization;
+                return View(model);
+            }
+
+            if (!string.IsNullOrEmpty(user.AvatarPath))
+                _fileService.DeleteFile(user.AvatarPath);
+
+            user.AvatarPath = await _fileService.SaveAvatarAsync(model.Avatar, userId);
+        }
+
+        user.FirstName    = model.FirstName;
+        user.LastName     = model.LastName;
+        user.PhoneNumber  = model.PhoneNumber;
+        user.PhoneNumber2 = model.PhoneNumber2;
+        user.Address      = model.Address;
+        user.City         = model.City;
+        if (model.DateOfBirth.HasValue)
+            user.DateOfBirth = model.DateOfBirth.Value;
+
+        student.Bio = model.Bio;
+
+        await _userManager.UpdateAsync(user);
+        await _context.SaveChangesAsync();
+
+        TempData["Success"] = "Profile updated successfully!";
+        return RedirectToAction(nameof(Profile));
     }
 
     public async Task<IActionResult> Notifications()
