@@ -31,12 +31,33 @@
             </div>
 
             <!-- Images -->
-            @if (Model.Images.Any())
+            @{
+                var beforeImages = Model.Images.Where(i => !i.IsAfterTreatment).ToList();
+                var afterImages  = Model.Images.Where(i => i.IsAfterTreatment).ToList();
+            }
+            @if (beforeImages.Any())
             {
                 <div class="db-card p-4 mb-4">
                     <h6 class="fw-600 mb-3"><i class="bi bi-images me-2"></i>Case Images</h6>
                     <div class="row g-2">
-                        @foreach (var img in Model.Images)
+                        @foreach (var img in beforeImages)
+                        {
+                            <div class="col-4">
+                                <img src="@img.ImagePath" class="img-fluid rounded-db"
+                                     style="height:160px;width:100%;object-fit:cover;cursor:pointer"
+                                     data-bs-toggle="modal" data-bs-target="#imgModal"
+                                     onclick="document.getElementById('modalImg').src='@img.ImagePath'" />
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            @if (afterImages.Any())
+            {
+                <div class="db-card p-4 mb-4">
+                    <h6 class="fw-600 mb-3"><i class="bi bi-camera-fill text-success me-2"></i>After Treatment Images</h6>
+                    <div class="row g-2">
+                        @foreach (var img in afterImages)
                         {
                             <div class="col-4">
                                 <img src="@img.ImagePath" class="img-fluid rounded-db"

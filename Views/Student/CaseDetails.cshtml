@@ -30,12 +30,33 @@
                 }
             </div>
 
-            @if (Model.Images.Any())
+            @{
+                var beforeImages = Model.Images.Where(i => !i.IsAfterTreatment).ToList();
+                var afterImages  = Model.Images.Where(i => i.IsAfterTreatment).ToList();
+            }
+
+            @if (beforeImages.Any())
             {
                 <div class="db-card p-4 mb-4">
                     <h6 class="fw-600 mb-3"><i class="bi bi-images me-2"></i>Case Images</h6>
                     <div class="row g-2">
-                        @foreach (var img in Model.Images)
+                        @foreach (var img in beforeImages)
+                        {
+                            <div class="col-4">
+                                <img src="@img.ImagePath" class="img-fluid rounded-db"
+                                     style="height:160px;width:100%;object-fit:cover" />
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (afterImages.Any())
+            {
+                <div class="db-card p-4 mb-4">
+                    <h6 class="fw-600 mb-3"><i class="bi bi-camera-fill text-success me-2"></i>After Treatment Images</h6>
+                    <div class="row g-2">
+                        @foreach (var img in afterImages)
                         {
                             <div class="col-4">
                                 <img src="@img.ImagePath" class="img-fluid rounded-db"
@@ -53,12 +74,19 @@
                 {
                     <div class="db-card p-4">
                         <h6 class="fw-600 mb-3"><i class="bi bi-check-circle-fill text-success me-2"></i>Complete This Case</h6>
-                        <form asp-controller="Student" asp-action="CompleteCase" method="post" data-complete-form>
+                        <form asp-controller="Student" asp-action="CompleteCase" method="post"
+                              enctype="multipart/form-data" data-complete-form>
                             <input type="hidden" name="id" value="@Model.Id" />
                             <div class="mb-3">
                                 <label class="form-label">Completion Notes <span class="text-muted">(optional)</span></label>
                                 <textarea name="notes" class="form-control" rows="3"
                                           placeholder="Describe what treatment was performed..."></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">After Treatment Images <span class="text-muted">(optional, up to 5)</span></label>
+                                <input type="file" name="afterImages" class="form-control"
+                                       accept=".jpg,.jpeg,.png,.webp" multiple />
+                                <div class="form-text">JPG, PNG or WebP · max 5 MB each</div>
                             </div>
                             <button type="submit" class="btn btn-success fw-600 px-4">
                                 <i class="bi bi-check2-all me-2"></i>Mark as Completed

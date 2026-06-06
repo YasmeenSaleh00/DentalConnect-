@@ -8,5 +8,6 @@ public class CaseImage
     public string ImagePath { get; set; } = string.Empty;
     public string? Caption { get; set; }
     public bool IsPrimary { get; set; } = false;
+    public bool IsAfterTreatment { get; set; } = false;
     public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
 }

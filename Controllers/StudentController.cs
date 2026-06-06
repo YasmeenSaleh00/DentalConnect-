@@ -156,7 +156,7 @@ public class StudentController : Controller
     }
 
     [HttpPost, ValidateAntiForgeryToken]
-    public async Task<IActionResult> CompleteCase(int id, string? notes)
+    public async Task<IActionResult> CompleteCase(int id, string? notes, List<IFormFile>? afterImages)
     {
         var userId = _userManager.GetUserId(User)!;
         var student = await _context.StudentProfiles.FirstOrDefaultAsync(s => s.UserId == userId);
@@ -183,6 +183,20 @@ public class StudentController : Controller
             ChangedByUserId = userId,
             Notes = notes
         });
+
+        if (afterImages is { Count: > 0 })
+        {
+            foreach (var file in afterImages.Where(f => _fileService.IsValidImage(f)))
+            {
+                var path = await _fileService.SaveCaseImageAsync(file, id);
+                _context.CaseImages.Add(new CaseImage
+                {
+                    CaseId = id,
+                    ImagePath = path,
+                    IsAfterTreatment = true
+                });
+            }
+        }
 
         var patientUser = dentalCase.Patient.User;
         _context.Notifications.Add(new Notification
