@@ -21,8 +21,8 @@ DentalConnect/
 ├── ViewModels/           # Account, Case, Testimonial view models
 ├── Views/                # Razor views per controller + Shared layout
 ├── wwwroot/
-│   ├── css/dentbridge.css
-│   ├── js/dentbridge.js
+│   ├── css/dentalconnect.css
+│   ├── js/dentalconnect.js
 │   └── uploads/          # Runtime file storage
 └── Migrations/
 ```
@@ -42,4 +42,4 @@ DentalConnect/
 
 ## License
 
-This project was developed as a graduation project.
+This project was developed as a graduation project in Orange Coding School.
