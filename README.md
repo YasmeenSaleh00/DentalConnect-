@@ -1,5 +1,5 @@
-# DentBridge
-DentBridge is a web-based dental platform that connects patients who need affordable dental treatment
+# DentalLink
+DentalLink is a web-based dental platform that connects patients who need affordable dental treatment
 with 5th-year dental students who require real clinical experience to complete their academic program. All
 treatments are performed under the direct supervision of licensed dental faculty at registered universities.
 The platform acts as a structured bridge: patients post dental cases, qualified students accept them, and
@@ -8,7 +8,7 @@ student approvals, case monitoring, and platform integrity.
 ## Project Structure
 
 ```
-DentBridge/
+DentalLink/
 ├── Areas/Admin/          # Admin area (controllers + views)
 ├── Controllers/          # Account, Home, Patient, Student
 ├── Data/
